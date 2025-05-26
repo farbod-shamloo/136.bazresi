@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Form, Input, Button, Row, Col, message } from 'antd'
 import { Icon } from '@iconify/react'
 import MyJalaliDatePicker from '@/utils/MyJalaliDatePicker'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import { getCaptcha } from '@/services/user' // فرض بر اینه که این تابع رو داری
 
 const validateNationalCode = (_, value) => {
   if (!value) return Promise.reject(new Error('اجباری'))
@@ -18,41 +20,37 @@ const validateNationalCode = (_, value) => {
 
 const RegisterPage = () => {
   const [form] = Form.useForm()
-  const [captchaBase64, setCaptchaBase64] = useState('')
-  const [loadingCaptcha, setLoadingCaptcha] = useState(false)
 
-  const fetchCaptcha = async () => {
-    setLoadingCaptcha(true)
-    try {
-      const res = await fetch(
-        'https://api.bazresi.ir/api/v1/Authenticate/CreateExternalCaptcha?BackColor=red&ForeColor=blue&FontSize=24'
-      )
-      const data = await res.json()
-      if (data && data.dntCaptchaImage) {
-        setCaptchaBase64(data.dntCaptchaImage)
-      }
-    } catch (error) {
-      console.error('خطا در دریافت کپچا:', error)
-      message.error('خطا در دریافت کد امنیتی')
-    } finally {
-      setLoadingCaptcha(false)
+  
+  const {
+    data: captchaData,
+    isLoading: loadingCaptcha,
+    refetch: fetchCaptcha,
+  } = useQuery({
+    queryKey: ['captcha'],
+    queryFn: getCaptcha,
+    refetchOnWindowFocus: false,
+  })
+
+ 
+  React.useEffect(() => {
+    if (captchaData && captchaData.dntCaptchaImage) {
+      setCaptchaBase64(captchaData.dntCaptchaImage)
     }
-  }
+  }, [captchaData])
 
-  useEffect(() => {
-    fetchCaptcha()
-  }, [])
+  // حالت کپچا base64
+  const [captchaBase64, setCaptchaBase64] = React.useState('')
 
   const onFinish = (values) => {
     if (!values.captcha) {
       message.error('کد امنیتی را وارد کنید')
       return
     }
-    // چون کد واقعی کپچا نداریم، فقط بررسی می‌کنیم چیزی وارد شده باشه
+    
     message.success('ثبت نام با موفقیت انجام شد!')
     console.log('Form values:', values)
   }
-
 
   const onFocusValidate = (name) => {
     form.validateFields([name])
@@ -69,19 +67,15 @@ const RegisterPage = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl text-[#292b2c]">ثبت نام </h2>
           <Link href="/">
-          <button>
-            <Icon icon="ic:baseline-arrow-back" width="28" height="28" />
-          </button></Link>
+            <button>
+              <Icon icon="ic:baseline-arrow-back" width="28" height="28" />
+            </button>
+          </Link>
         </div>
 
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          requiredMark="optional"
-          scrollToFirstError
-        >
-          <Row gutter={16}>
+        <Form form={form} layout="vertical" onFinish={onFinish} requiredMark="optional" scrollToFirstError>
+         
+   <Row gutter={16}>
             <Col xs={24} sm={12}>
               <Form.Item
                 label={
@@ -218,7 +212,13 @@ const RegisterPage = () => {
                   src={`data:image/png;base64,${captchaBase64}`}
                   alt="کد امنیتی"
                   style={{ cursor: 'pointer', userSelect: 'none', borderRadius: 8 }}
-                  onClick={fetchCaptcha} // کلیک برای رفرش کپچا
+                  onClick={() => {
+                    fetchCaptcha().then((res) => {
+                      if (res?.data?.dntCaptchaImage) setCaptchaBase64(res.data.dntCaptchaImage)
+                    }).catch(() => {
+                      message.error('خطا در دریافت کد امنیتی')
+                    })
+                  }}
                   width={150}
                   height={50}
                   title="برای دریافت کپچا جدید کلیک کنید"
