@@ -1,0 +1,38 @@
+    [
+    {
+        "id": 1,
+        "title": "شکایات و گزارش‌های فساد",
+        "image": "/images/1.png",
+        "Link" : "https://136.bazresi.ir/dargah/user2/login?next=https%3A%2F%2Fbpms.bazresi.ir%2Fapp%2Fdashboard2%3Fcode%3DApp&name=%D8%B4%DA%A9%D8%A7%DB%8C%D8%A7%D8%AA%20%D9%88%20%DA%AF%D8%B2%D8%A7%D8%B1%D8%B4%20%D9%87%D8%A7%DB%8C%20%D9%81%D8%B3%D8%A7%D8%AF"
+    },
+    {
+        "id": 2,
+        "title": "گزارش فساد ناشناس",
+        "image": "/images/2.png",
+        "Link" : ""
+    },
+    {
+        "id": 3,
+        "title": "پایگاه اطلاع رسانی سازمان",
+        "image": "/images/3.png",
+        "Link" : "https://bazresi.ir/"
+    },
+    {
+        "id": 4,
+        "title": "سامانه ملی انتشار و دسترسی آزاد به اطلاعات",
+        "image": "/images/4.png",
+        "Link" : "https://iranfoia.ir/home/"
+    },
+    {
+        "id": 5,
+        "title": "تماس با 136",
+        "image": "/images/5.png",
+        "Link" : ""
+    },
+    {
+        "id": 6,
+        "title": "پیگیری وضعیت گزارش فساد ناشناس",
+        "image": "/images/6.png",
+        "Link" : ""
+    }
+    ]
