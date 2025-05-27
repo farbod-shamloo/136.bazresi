@@ -1,8 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Input, Button, Row, Col, message } from 'antd'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import { getCaptcha } from '@/services/user'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 const validateNationalCode = (_, value) => {
   if (!value) return Promise.reject(new Error('اجباری'))
@@ -16,10 +19,31 @@ const validateNationalCode = (_, value) => {
 
 const LoginPage = () => {
   const [form] = Form.useForm()
-  const [captchaCode, setCaptchaCode] = useState('A1b2C')
+  const [captchaBase64, setCaptchaBase64] = useState("")
+  const [captchaText, setCaptchaText] = useState("")
+  const [captchaToken, setCaptchaToken] = useState("")
+  const [loadingCaptcha, setLoadingCaptcha] = useState(false)
+
+  const {
+    data: captchaData,
+    isLoading: captchaIsLoading,
+    refetch: fetchCaptcha,
+  } = useQuery({
+    queryKey: ["captcha"],
+    queryFn: getCaptcha,
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => {
+    if (captchaData?.dntCaptchaImage && captchaData?.dntCaptchaText) {
+      setCaptchaBase64(captchaData.dntCaptchaImage)
+      setCaptchaText(captchaData.dntCaptchaText)
+      setCaptchaToken(captchaData.dntCaptchaToken)
+    }
+  }, [captchaData])
 
   const onFinish = (values) => {
-    if (values.captcha !== captchaCode) {
+    if (values.captcha !== captchaText) {
       message.error('کد امنیتی صحیح نیست')
       return
     }
@@ -36,24 +60,27 @@ const LoginPage = () => {
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
       style={{ backgroundImage: "url('/images/31.jpg')" }}
     >
-      {/* لایه نیمه شفاف روی عکس */}
+    
       <div className="absolute inset-0 bg-black opacity-60 z-0"></div>
 
-      {/* فرم */}
-      <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-lg max-w-5xl w-full mx-4 flex overflow-hidden">
-        {/* سمت چپ */}
-        <div className="flex-1 bg-[#135388] p-10 flex flex-col justify-center text-white">
-         <img className='w-[200px] m-auto' src="/images/allah.svg" alt="" />
-          <div className="m-auto text-sm opacity-70">
-           <p> درگـاه سـامانه‌های یکپـارچه </p>
-           <p> سازمان بازرسی کل کشور </p>
-           <br />
-           <Link href="#"> www.136.ir </Link>
-          </div>
-        </div>
+     
+      <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-lg max-w-5xl w-full mx-4 flex flex-col md:flex-row overflow-hidden">
+        
+   <div className="flex-1 p-8 md:p-10 flex flex-col justify-center text-white items-center text-center animated-gradient-bg">
+  <img className='w-[150px] md:w-[200px] mb-6' src="/images/allah.svg" alt="" />
+  <div className="text-sm opacity-70 leading-relaxed">
+    <p>درگـاه سـامانه‌های یکپـارچه</p>
+    <p>سازمان بازرسی کل کشور</p>
+    <br />
+    <Link href="#">
+      <p className="hover:underline cursor-pointer">www.136.ir</p>
+    </Link>
+  </div>
+</div>
 
-        {/* سمت راست - فرم */}
-        <div className="flex-1 p-10">
+
+      
+        <div className="flex-1 p-6 md:p-10">
           <Form
             form={form}
             layout="vertical"
@@ -108,17 +135,53 @@ const LoginPage = () => {
               rules={[{ required: true, message: 'اجباری' }]}
               validateTrigger={['onFocus', 'onBlur']}
             >
-              <Row gutter={16} align="middle">
-                <Col flex="auto">
+              <Row gutter={16} align="middle" className="flex-col sm:flex-row">
+                <Col flex="auto" className="w-full sm:w-auto mb-4 sm:mb-0">
                   <Input
                     placeholder="کد امنیتی را وارد کنید"
                     onFocus={() => onFocusValidate('captcha')}
                     className="w-full !py-1.5 !rounded-[12px]"
                   />
                 </Col>
-                <Col>
-                  <div className="mt-2 bg-gray-300 rounded text-center py-2 text-gray-800 font-bold select-none px-4">
-                    🔒 {captchaCode}
+                <Col xs={24} sm={12}>
+                  <div className="flex items-center gap-3 h-[50px] justify-center sm:justify-start">
+                    {captchaIsLoading || loadingCaptcha ? (
+                      <div className="w-[150px] h-[50px] flex items-center justify-center">
+                        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    ) : captchaBase64 ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLoadingCaptcha(true)
+                            fetchCaptcha()
+                              .then((res) => {
+                                if (res?.data?.dntCaptchaImage) {
+                                  setCaptchaBase64(res.data.dntCaptchaImage)
+                                }
+                              })
+                              .catch(() => {
+                                message.error("خطا در دریافت کد امنیتی")
+                              })
+                              .finally(() => setLoadingCaptcha(false))
+                          }}
+                          className="text-gray-600 hover:text-blue-600 transition"
+                          title="بارگذاری کپچا جدید"
+                        >
+                          <Icon icon="mdi:refresh" width="24" height="24" />
+                        </button>
+                        <img
+                          src={`data:image/png;base64,${captchaBase64}`}
+                          alt="کد امنیتی"
+                          className="select-none rounded"
+                          width={150}
+                          height={50}
+                        />
+                      </>
+                    ) : (
+                      <div>کد امنیتی دریافت نشد</div>
+                    )}
                   </div>
                 </Col>
               </Row>
@@ -135,20 +198,20 @@ const LoginPage = () => {
           </Form>
 
           <div className="mt-6 text-center text-sm space-y-2">
-            <div>
-              <a href="#" className="text-[#135388] hover:underline">
+            <div className='border py-1.5 border-gray-300 rounded-3xl'>
+              <Link href="#" className="text-[#135388] hover:underline">
                 ثبت نام شهروند
-              </a>
+              </Link>
             </div>
 
             <div className="flex justify-center items-center gap-4">
-              <a href="#" className="text-[#135388] hover:underline">
+              <Link href="#" className="text-[#135388] hover:underline">
                 فراموشی رمز عبور
-              </a>
+              </Link>
               <span>|</span>
-              <a href="#" className="text-[#135388] hover:underline">
+              <Link href="#" className="text-[#135388] hover:underline">
                 تغییر شماره
-              </a>
+              </Link>
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-6 mb-2 text-gray-500">
@@ -157,11 +220,11 @@ const LoginPage = () => {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="flex justify-center gap-4">
-              <Button className="bg-[#135388] text-white rounded-lg px-6 py-2 hover:bg-[#0f3768]">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button className="bg-[#135388] text-white rounded-lg px-6 py-2 hover:bg-[#0f3768] w-full sm:w-auto">
                 دولت من
               </Button>
-              <Button className="bg-[#ccc] text-[#333] rounded-lg px-6 py-2 hover:bg-[#bbb]">
+              <Button className="bg-[#ccc] text-[#333] rounded-lg px-6 py-2 hover:bg-[#bbb] w-full sm:w-auto">
                 ثنا قوه قضاییه
               </Button>
             </div>

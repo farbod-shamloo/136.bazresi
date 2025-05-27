@@ -56,7 +56,7 @@ const CardList = () => {
           {cards.map(({ id, title, image, Link }) => (
             <div
               key={id}
-              className="group bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition duration-300 ease-in-out overflow-hidden flex flex-col"
+              className="group bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition duration-300 ease-in-out overflow-hidden flex flex-col max-w-full sm:max-w-[400px] mx-auto"
             >
               <div className="w-full h-52 bg-white flex items-center justify-center">
                 <img
@@ -78,7 +78,7 @@ const CardList = () => {
                     rel="noopener noreferrer"
                     className="mt-auto inline-block text-center bg-[#65879c] hover:bg-[#7999ad] text-white py-2 px-4 rounded-md transition-all duration-200 shadow-md"
                   >
-                    مشاهده 
+                    مشاهده
                   </a>
                 ) : (
                   <span className="text-gray-400 text-sm text-center mt-auto">
@@ -93,62 +93,64 @@ const CardList = () => {
 
       {/* حالت جدولی */}
       {viewMode === "table" && (
-        <table className="w-full border-collapse border border-gray-300 shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-[#65879c] text-white">
-            <tr>
-              <th className="p-3 text-center">ردیف</th>
-              <th className="p-3 text-center">تصویر</th>
-              <th className="p-3 text-center">عنوان</th>
-              <th className="p-3 text-center">لینک</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cards.map(({ id, title, image, Link }, index) => (
-              <tr
-                key={id}
-                className={`text-center border-b border-gray-300 ${
-                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                } hover:bg-blue-100 transition cursor-pointer`}
-                onClick={() => Link && window.open(Link, "_blank")}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && Link) window.open(Link, "_blank");
-                }}
-              >
-                <td className="p-2">{index + 1}</td>
-                <td className="p-2">
-                  <img
-                    src={image}
-                    alt={title}
-                    className="w-16 h-16 object-contain mx-auto rounded"
-                    loading="lazy"
-                  />
-                </td>
-                <td className="p-2">{title}</td>
-                <td className="p-2">
-                  {Link ? (
-                    <a
-                      href={Link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#65879c] underline hover:text-[#6f8fa3]"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      مشاهده
-                    </a>
-                  ) : (
-                    "-"
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse border border-gray-300 shadow-md rounded-lg overflow-hidden text-sm sm:text-base">
+            <thead className="bg-[#65879c] text-white">
+              <tr>
+                <th className="p-2 sm:p-3 text-center">ردیف</th>
+                <th className="p-2 sm:p-3 text-center">تصویر</th>
+                <th className="p-2 sm:p-3 text-center">عنوان</th>
+                <th className="p-2 sm:p-3 text-center">لینک</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {cards.map(({ id, title, image, Link }, index) => (
+                <tr
+                  key={id}
+                  className={`text-center border-b border-gray-300 ${
+                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  } hover:bg-blue-100 transition cursor-pointer`}
+                  onClick={() => Link && window.open(Link, "_blank")}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && Link) window.open(Link, "_blank");
+                  }}
+                >
+                  <td className="p-1 sm:p-2">{index + 1}</td>
+                  <td className="p-1 sm:p-2">
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-12 h-12 sm:w-16 sm:h-16 object-contain mx-auto rounded"
+                      loading="lazy"
+                    />
+                  </td>
+                  <td className="p-1 sm:p-2">{title}</td>
+                  <td className="p-1 sm:p-2">
+                    {Link ? (
+                      <a
+                        href={Link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#65879c] underline hover:text-[#6f8fa3]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        مشاهده
+                      </a>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* حالت آیکونی جدید */}
       {viewMode === "icon" && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-6 justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-6 justify-center">
           {cards.map(({ id, title, image, Link }) => (
             <div
               key={id}

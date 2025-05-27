@@ -7,12 +7,12 @@ import { Icon } from '@iconify/react'
 
 function page() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const isLoggedIn = false // فرضی
+  const isLoggedIn = false
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden flex flex-col">
 
-      {/* بک‌گراند */}
+      {/* بک‌گراند تصویر */}
       <div className="absolute inset-0 -z-10">
         <img
           src="/images/bg.svg"
@@ -21,23 +21,24 @@ function page() {
         />
       </div>
 
-      {/* نوار آبی بالا */}
-      <div className="w-full h-[300px] md:h-[400px] bg-[#00385d]" />
+      {/* حذف بک‌گراند آبی یا نمایش فقط روی دسکتاپ */}
+      {/* اگر می‌خوای بک‌گراند آبی حذف بشه، این div رو کامنت کن یا حذف */}
+      <div className="hidden md:block w-full h-[400px] bg-[#00385d]" />
 
-      {/* فضای بین */}
-      <div className="w-full h-[calc(100vh-250px)] md:h-[calc(100vh-300px)] bg-transparent" />
+      {/* فضای بالای صفحه واکنش‌گرا */}
+      <div className="flex-grow w-full bg-transparent min-h-[250px] md:min-h-[calc(100vh-400px)]" />
 
-      {/* محتوای وسط */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto w-[90%] max-w-7xl mx-auto px-4">
+      {/* محتوای مرکزی */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
+        <div className="pointer-events-auto w-full max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:justify-between gap-4 md:items-center">
+
             <div className="text-center md:text-right">
               <p className="text-base sm:text-lg md:text-xl text-white mb-1 leading-relaxed">
                 درگاه سامانه‌های یکپارچه سازمان بازرسی کل کشور
               </p>
             </div>
 
-            {/* دکمه‌ها - فقط در سایز md به بالا */}
             <div className="hidden md:flex text-white text-sm gap-2 justify-center md:justify-end">
               <Link href="user/register">
                 <button className="bg-[#124b8a] py-2 px-5 rounded-3xl hover:bg-[#1d5799]">
@@ -50,6 +51,7 @@ function page() {
                 </button>
               </Link>
             </div>
+
           </div>
 
           <div className="mt-6">

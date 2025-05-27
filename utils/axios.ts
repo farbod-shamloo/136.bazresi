@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  // timeout: 10000,
   withCredentials: true,
 });
 
@@ -31,7 +31,7 @@ api.interceptors.response.use(
 
     switch (status) {
       case 401:
-        window.location.href = DARGAH_URL!;
+        window.location.href = "/guest";
         break;
       case 403:
         window.location.href = "/error?errorCode=403";
