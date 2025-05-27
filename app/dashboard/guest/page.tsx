@@ -53,7 +53,7 @@ function page() {
           </div>
 
           <div className="mt-6">
-            <HomePage />
+            {/* <HomePage /> */}
           </div>
         </div>
       </div>
