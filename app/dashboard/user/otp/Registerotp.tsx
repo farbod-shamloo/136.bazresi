@@ -1,21 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Row, Col, message } from "antd";
+import { Form, Input, Button, Row, Col, message, Spin } from "antd";
 import { Icon } from "@iconify/react";
 import MyJalaliDatePicker from "@/utils/MyJalaliDatePicker";
 import Link from "next/link";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getCaptcha, generateExternalUserRegisterOTPWithCaptcha } from "@/services/user";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  getCaptcha,
+  generateExternalUserRegisterOTPWithCaptcha,
+} from "@/services/user";
 import FormLayout from "@/layout/FormLayout";
+import Image from "next/image";
 
 const validateNationalCode = (_, value) => {
   if (!value) return Promise.reject(new Error("اجباری"));
-  if (!/^\d{10}$/.test(value)) return Promise.reject(new Error("کد ملی معتبر نیست"));
+  if (!/^\d{10}$/.test(value))
+    return Promise.reject(new Error("کد ملی معتبر نیست"));
 
   const check = +value[9];
-  const sum = [...Array(9)].reduce((acc, _, i) => acc + +value[i] * (10 - i), 0) % 11;
-  if ((sum < 2 && check === sum) || (sum >= 2 && check === 11 - sum)) return Promise.resolve();
+  const sum =
+    [...Array(9)].reduce((acc, _, i) => acc + +value[i] * (10 - i), 0) % 11;
+  if ((sum < 2 && check === sum) || (sum >= 2 && check === 11 - sum))
+    return Promise.resolve();
   return Promise.reject(new Error("کد ملی معتبر نیست"));
 };
 
@@ -24,7 +33,8 @@ function Registerotp({ setStep }) {
   const [captchaBase64, setCaptchaBase64] = useState("");
   const [captchaText, setCaptchaText] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
-  const [loadingCaptcha, setLoadingCaptcha] = useState(false)
+  const [loadingCaptcha, setLoadingCaptcha] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // اضافه شد
 
   const {
     data: captchaData,
@@ -41,70 +51,64 @@ function Registerotp({ setStep }) {
       setCaptchaBase64(captchaData.dntCaptchaImage);
       setCaptchaText(captchaData.dntCaptchaText);
       setCaptchaToken(captchaData.dntCaptchaToken);
+      setInitialLoading(false); // کپچا بارگذاری شد => لودینگ تمام شود
     }
   }, [captchaData]);
 
-  const mutation = useMutation({
-    mutationFn: generateExternalUserRegisterOTPWithCaptcha,
-    onSuccess: (data) => {
-      console.log(data,"ثبت نام با موفقیت انجام شد!");
-      setStep(2);
-    },
-    onError: (error) => {
-      console.log(error.message || "خطا در ثبت نام");
-      fetchCaptcha();
-    },
-  });
-
-const onFinish = async (values) => {
-  console.log("birthDate raw =", values.birthDate);
-
-  if (!values.captcha) return message.error("کد امنیتی را وارد کنید");
-  if (values.captcha.trim() !== captchaText.trim())
-    return message.error("کد امنیتی اشتباه است");
-
-  const birthDateUnix = values.birthDate?.unix;
-  const birthDateISO = birthDateUnix
+const mutation = useMutation({
+  mutationFn: generateExternalUserRegisterOTPWithCaptcha,
+  onSuccess: (data) => {
+    toast.success("ثبت نام با موفقیت انجام شد!");
+    setStep(2);
+  },
+  onError: (error) => {
+    toast.error(error.message || "خطا در ثبت نام");
+    fetchCaptcha();
+  },
+});
+  const onFinish = async (values) => {
+    console.log("bith date" ,values.birthDate)
+    
+    const birthDateUnix = values.birthDate?.unix;
+    const birthDateISO = birthDateUnix
     ? new Date(birthDateUnix * 1000).toISOString().split("T")[0]
     : "";
+    
+    const formData = new FormData();
+    formData.append("LastName", values.lastName);
+    formData.append("Mobile", values.phone);
+    formData.append("FatherName", values.fatherName);
+    formData.append("DNTCaptchaInputText", values.captcha);
+    formData.append("DNTCaptchaText", captchaText);
+    formData.append("DNTCaptchaToken", captchaToken);
+    formData.append("BirthDate", birthDateISO);
+    formData.append("FirstName", values.firstName);
+    formData.append("NationalCode", values.nationalCode);
 
-  const formData = new FormData();
-  formData.append("LastName", values.lastName);
-  formData.append("Mobile", values.phone);
-  formData.append("FatherName", values.fatherName);
-  formData.append("DNTCaptchaInputText", values.captcha);
-  formData.append("DNTCaptchaText", captchaText);
-  formData.append("DNTCaptchaToken", captchaToken);
-  formData.append("BirthDate", birthDateISO); 
-  formData.append("FirstName", values.firstName);
-  formData.append("NationalCode", values.nationalCode);
-
-      mutation.mutate(formData);
-
-  // mutation
-  //   .mutateAsync(formData)
-  //   .then(() => {
-  //     message.success("ثبت نام با موفقیت انجام شد!");
-  //     setStep(2);
-  //   })
-  //   .catch((err) => {
-  //    console.log(err?.message || "خطا در ثبت نام");
-  //     fetchCaptcha();
-  //   });
-};
+    mutation.mutate(formData);
+  };
 
   const onFocusValidate = (name) => {
     form.validateFields([name]);
   };
+
+  if (initialLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[300px]">
+        <Spin size="large" tip="در حال بارگذاری..." />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="relative z-10 bg-white bg-opacity-95 p-6 rounded-lg shadow-lg w-full max-w-xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl text-[#292b2c]">ثبت نام </h2>
-          <Link href="/">
-            <button>
+          <Link href="./login">
+            
               <Icon icon="ic:baseline-arrow-back" width="28" height="28" />
-            </button>
+            
           </Link>
         </div>
 
@@ -116,7 +120,7 @@ const onFinish = async (values) => {
             requiredMark="optional"
             scrollToFirstError
           >
-            <Row gutter={16}>
+                        <Row gutter={16}>
               <Col xs={24} sm={12}>
                 <Form.Item
                   label={
@@ -236,6 +240,7 @@ const onFinish = async (values) => {
               </Col>
             </Row>
 
+
             <Row gutter={16} align="middle">
               <Col xs={24} sm={12}>
                 <Form.Item
@@ -245,11 +250,18 @@ const onFinish = async (values) => {
                     </span>
                   }
                   name="captcha"
-                  rules={[{ required: true, message: "اجباری" }]}
+                  rules={[
+                    { required: true, message: "اجباری" },
+                    // {
+                    //   validator: (_, value) =>
+                    //     value && value.trim() === captchaText.trim()
+                    //       ? Promise.resolve()
+                    //       : Promise.reject(new Error("کد امنیتی اشتباه است")),
+                    // },
+                  ]}
                 >
                   <Input
                     className="w-full !py-1.5 !rounded-[12px]"
-                    placeholder="کد امنیتی را وارد کنید"
                     onFocus={() => onFocusValidate("captcha")}
                     autoComplete="off"
                   />
@@ -284,12 +296,12 @@ const onFinish = async (values) => {
                       >
                         <Icon icon="mdi:refresh" width="24" height="24" />
                       </button>
-                      <img
+                      <Image
                         src={`data:image/png;base64,${captchaBase64}`}
                         alt="کد امنیتی"
-                        className="select-none rounded "
                         width={140}
                         height={50}
+                        className="select-none rounded"
                       />
                     </>
                   ) : (
