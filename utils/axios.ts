@@ -7,6 +7,7 @@ const api = axios.create({
   baseURL: API_URL,
   // timeout: 10000,
   withCredentials: true,
+  
 });
 
 api.interceptors.request.use(
@@ -32,15 +33,6 @@ api.interceptors.response.use(
     switch (status) {
       case 401:
         window.location.href = "/guest";
-        break;
-      case 403:
-        window.location.href = "/error?errorCode=403";
-        break;
-      case 500:
-        window.location.href = "/error?errorCode=500";
-        break;
-      case 503:
-        window.location.href = "/error?errorCode=503";
         break;
       case 404:
         window.location.href = "/*";

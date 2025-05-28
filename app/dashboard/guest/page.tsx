@@ -1,47 +1,43 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import HomePage from '@/components/HomePage'
-import { Icon } from '@iconify/react'
+import React, { useState } from "react";
+import Link from "next/link";
+import HomePage from "@/components/HomePage";
+import { Icon } from "@iconify/react";
+import { Button, Dropdown, Menu } from "antd";
+import Image from "next/image";
 
 function page() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // حالت ورود کاربر
-  const userName = 'کاربر عزیز' // نام کاربر (مثال)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const userName = "کاربر عزیز";
 
-  // تابع خروج کاربر (شبیه سازی)
   const handleLogout = () => {
-    alert('شما خارج شدید')
-    setIsLoggedIn(false)
-    setIsDrawerOpen(false)
-  }
+    alert("شما خارج شدید");
+    setIsLoggedIn(false);
+    setIsDrawerOpen(false);
+  };
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden flex flex-col">
-
-      {/* بک‌گراند تصویر */}
       <div className="absolute inset-0 -z-10">
-        <img
+        <Image
           src="/images/bg.svg"
           alt="بک‌گراند"
-          className="w-full h-full object-cover"
+          layout="fill"
+          objectFit="cover"
+          className="w-full h-full"
         />
       </div>
 
-      {/* حذف بک‌گراند آبی یا نمایش فقط روی دسکتاپ */}
       <div className="hidden md:block w-full h-[400px] bg-[#00385d]" />
 
       <div className="flex-grow w-full bg-transparent min-h-[250px] md:min-h-[calc(100vh-400px)]" />
 
-      {/* محتوای مرکزی */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
         <div className="pointer-events-auto w-full max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:justify-between gap-4 md:items-center">
-
-            <div className="text-center md:text-right">
-              {/* این متن حذف شده بر اساس درخواست */}
-            </div>
+            <div className="text-center md:text-right"></div>
 
             <div className="hidden md:flex text-white text-sm gap-2 justify-center md:justify-end">
               {!isLoggedIn && (
@@ -58,25 +54,85 @@ function page() {
                   </Link>
                 </>
               )}
-
               {isLoggedIn && (
-                <>
-                  <button
-                    onClick={() => alert('رفتن به پروفایل')}
-                    className="bg-[#124b8a] py-2 px-5 rounded-3xl hover:bg-[#1d5799]"
-                  >
-                    {userName}
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-[#e02424] py-2 px-5 rounded-3xl hover:bg-[#ff3b3b]"
-                  >
-                    خروج
-                  </button>
-                </>
+                <Dropdown
+                  overlay={
+                    <Menu
+                      className="min-w-[200px] rounded-lg shadow-lg"
+                      style={{ padding: "8px 0", borderRadius: "12px" }}
+                    >
+                      <Menu.Item
+                        key="profile"
+                        icon={
+                          <Icon
+                            icon="mdi:account-circle-outline"
+                            className="text-xl text-blue-500"
+                          />
+                        }
+                        onClick={() => alert("رفتن به پروفایل")}
+                      >
+                        پروفایل
+                      </Menu.Item>
+                      <Menu.Item
+                        key="change-password"
+                        icon={
+                          <Icon
+                            icon="mdi:lock-reset"
+                            className="text-xl text-yellow-500"
+                          />
+                        }
+                        onClick={() => alert("تغییر رمز ورود")}
+                      >
+                        تغییر رمز ورود
+                      </Menu.Item>
+                      <Menu.Item
+                        key="change-role"
+                        icon={
+                          <Icon
+                            icon="mdi:account-switch-outline"
+                            className="text-xl text-purple-500"
+                          />
+                        }
+                        onClick={() => alert("تغییر سمت")}
+                      >
+                        تغییر سمت
+                      </Menu.Item>
+                      <Menu.Divider />
+                      <Menu.Item
+                        key="logout"
+                        icon={
+                          <Icon
+                            icon="mdi:logout"
+                            className="text-xl text-red-500"
+                          />
+                        }
+                        onClick={handleLogout}
+                        danger
+                      >
+                        خروج از حساب کاربری
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  trigger={["click"]}
+                  placement="bottomRight"
+                  arrow
+                >
+                  <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-full px-4 py-2 shadow-sm transition duration-150">
+                    <Icon
+                      icon="mdi:account-circle-outline"
+                      className="text-2xl text-gray-700"
+                    />
+                    <span className="text-gray-800 font-semibold">
+                      {userName}
+                    </span>
+                    <Icon
+                      icon="mdi:chevron-down"
+                      className="text-gray-500 text-lg"
+                    />
+                  </Button>
+                </Dropdown>
               )}
             </div>
-
           </div>
 
           <div className="mt-6">
@@ -85,7 +141,6 @@ function page() {
         </div>
       </div>
 
-      {/* نوار پایین فقط برای موبایل با UI/UX حرفه‌ای */}
       <div className="md:hidden fixed top-0 left-0 w-full bg-[#004974] text-white text-base shadow-lg py-3 px-5 z-50">
         <span>سامانه سازمان بازرسی کل کشور</span>
       </div>
@@ -120,17 +175,19 @@ function page() {
         </div>
       )}
 
-      {/* دراور پایین برای موبایل با UI/UX بهبود یافته */}
       {isDrawerOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-end"
+          className="md:hidden fixed inset-0 bg-[rgba(0,0,0,0.7)] z-50 flex justify-center items-end"
           role="dialog"
           aria-modal="true"
           aria-labelledby="drawer-title"
         >
           <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slide-up shadow-2xl">
             <div className="flex justify-between items-center mb-5">
-              <h2 id="drawer-title" className="text-[#004974] font-extrabold text-lg">
+              <h2
+                id="drawer-title"
+                className="text-[#004974] font-extrabold text-lg"
+              >
                 منوی دسترسی
               </h2>
               <button
@@ -145,12 +202,18 @@ function page() {
             <nav className="flex flex-col gap-5">
               {!isLoggedIn ? (
                 <>
-                  <Link href="user/register" onClick={() => setIsDrawerOpen(false)}>
+                  <Link
+                    href="user/register"
+                    onClick={() => setIsDrawerOpen(false)}
+                  >
                     <button className="w-full bg-[#004974] hover:bg-[#006f95] text-white py-3 rounded-3xl font-semibold shadow-md transition">
                       ثبت نام شهروند
                     </button>
                   </Link>
-                  <Link href="user/login" onClick={() => setIsDrawerOpen(false)}>
+                  <Link
+                    href="user/login"
+                    onClick={() => setIsDrawerOpen(false)}
+                  >
                     <button className="w-full bg-[#0098b3] hover:bg-[#00b8d4] text-white py-3 rounded-3xl font-semibold shadow-md transition">
                       ورود به حساب
                     </button>
@@ -158,17 +221,82 @@ function page() {
                 </>
               ) : (
                 <>
-                  <Link href="/profile" onClick={() => setIsDrawerOpen(false)}>
-                    <button className="w-full bg-[#004974] hover:bg-[#006f95] text-white py-3 rounded-3xl font-semibold shadow-md transition">
-                      پروفایل
-                    </button>
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full bg-[#e02424] hover:bg-[#ff3b3b] text-white py-3 rounded-3xl font-semibold shadow-md transition"
+                  <Dropdown
+                    overlay={
+                      <Menu
+                        className="min-w-[200px] rounded-lg shadow-lg"
+                        style={{ padding: "8px 0", borderRadius: "12px" }}
+                      >
+                        <Menu.Item
+                          key="profile"
+                          icon={
+                            <Icon
+                              icon="mdi:account-circle-outline"
+                              className="text-xl text-blue-500"
+                            />
+                          }
+                          onClick={() => alert("رفتن به پروفایل")}
+                        >
+                          پروفایل
+                        </Menu.Item>
+                        <Menu.Item
+                          key="change-password"
+                          icon={
+                            <Icon
+                              icon="mdi:lock-reset"
+                              className="text-xl text-yellow-500"
+                            />
+                          }
+                          onClick={() => alert("تغییر رمز ورود")}
+                        >
+                          تغییر رمز ورود
+                        </Menu.Item>
+                        <Menu.Item
+                          key="change-role"
+                          icon={
+                            <Icon
+                              icon="mdi:account-switch-outline"
+                              className="text-xl text-purple-500"
+                            />
+                          }
+                          onClick={() => alert("تغییر سمت")}
+                        >
+                          تغییر سمت
+                        </Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item
+                          key="logout"
+                          icon={
+                            <Icon
+                              icon="mdi:logout"
+                              className="text-xl text-red-500"
+                            />
+                          }
+                          onClick={handleLogout}
+                          danger
+                        >
+                          خروج از حساب کاربری
+                        </Menu.Item>
+                      </Menu>
+                    }
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    arrow
                   >
-                    خروج
-                  </button>
+                    <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-full px-4 py-2 shadow-sm transition duration-150">
+                      <Icon
+                        icon="mdi:account-circle-outline"
+                        className="text-2xl text-gray-700"
+                      />
+                      <span className="text-gray-800 font-semibold">
+                        {userName}
+                      </span>
+                      <Icon
+                        icon="mdi:chevron-down"
+                        className="text-gray-500 text-lg"
+                      />
+                    </Button>
+                  </Dropdown>
                 </>
               )}
             </nav>
@@ -193,7 +321,7 @@ function page() {
         }
       `}</style>
     </div>
-  )
+  );
 }
 
-export default page
+export default page;

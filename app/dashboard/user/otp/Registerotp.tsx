@@ -252,12 +252,7 @@ const mutation = useMutation({
                   name="captcha"
                   rules={[
                     { required: true, message: "اجباری" },
-                    // {
-                    //   validator: (_, value) =>
-                    //     value && value.trim() === captchaText.trim()
-                    //       ? Promise.resolve()
-                    //       : Promise.reject(new Error("کد امنیتی اشتباه است")),
-                    // },
+                   
                   ]}
                 >
                   <Input

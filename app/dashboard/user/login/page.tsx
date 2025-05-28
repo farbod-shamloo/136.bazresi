@@ -1,28 +1,36 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react'
-import { Form, Input, Button, Row, Col, message } from 'antd'
-import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
-import { getCaptcha } from '@/services/user'
-import { Icon } from '@iconify/react/dist/iconify.js'
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Row, Col, message } from "antd";
+import Link from "next/link";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getCaptcha, LoginWithExternalCaptcha } from "@/services/user";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import Image from "next/image";
 
 const validateNationalCode = (_, value) => {
-  if (!value) return Promise.reject(new Error('اجباری'))
-  if (!/^\d{10}$/.test(value)) return Promise.reject(new Error('کد ملی معتبر نیست'))
+  if (!value) return Promise.reject(new Error("اجباری"));
+  if (!/^\d{10}$/.test(value))
+    return Promise.reject(new Error("کد ملی معتبر نیست"));
 
-  const check = +value[9]
-  const sum = [...Array(9)].reduce((acc, _, i) => acc + +value[i] * (10 - i), 0) % 11
-  if ((sum < 2 && check === sum) || (sum >= 2 && check === 11 - sum)) return Promise.resolve()
-  return Promise.reject(new Error('کد ملی معتبر نیست'))
-}
+  const check = +value[9];
+  const sum =
+    [...Array(9)].reduce((acc, _, i) => acc + +value[i] * (10 - i), 0) % 11;
+  if ((sum < 2 && check === sum) || (sum >= 2 && check === 11 - sum))
+    return Promise.resolve();
+  return Promise.reject(new Error("کد ملی معتبر نیست"));
+};
 
 const LoginPage = () => {
-  const [form] = Form.useForm()
-  const [captchaBase64, setCaptchaBase64] = useState("")
-  const [captchaText, setCaptchaText] = useState("")
-  const [captchaToken, setCaptchaToken] = useState("")
-  const [loadingCaptcha, setLoadingCaptcha] = useState(false)
+  const router = useRouter();
+  const [form] = Form.useForm();
+  const [captchaBase64, setCaptchaBase64] = useState("");
+  const [captchaText, setCaptchaText] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [loadingCaptcha, setLoadingCaptcha] = useState(false);
 
   const {
     data: captchaData,
@@ -32,54 +40,82 @@ const LoginPage = () => {
     queryKey: ["captcha"],
     queryFn: getCaptcha,
     refetchOnWindowFocus: false,
-  })
+  });
 
   useEffect(() => {
     if (captchaData?.dntCaptchaImage && captchaData?.dntCaptchaText) {
-      setCaptchaBase64(captchaData.dntCaptchaImage)
-      setCaptchaText(captchaData.dntCaptchaText)
-      setCaptchaToken(captchaData.dntCaptchaToken)
+      setCaptchaBase64(captchaData.dntCaptchaImage);
+      setCaptchaText(captchaData.dntCaptchaText);
+      setCaptchaToken(captchaData.dntCaptchaToken);
     }
-  }, [captchaData])
+  }, [captchaData]);
 
-  const onFinish = (values) => {
-    if (values.captcha !== captchaText) {
-      message.error('کد امنیتی صحیح نیست')
-      return
-    }
-    message.success('ورود با موفقیت انجام شد!')
-    console.log('Form values:', values)
-  }
+  const loginMutation = useMutation({
+    mutationFn: LoginWithExternalCaptcha,
+    onSuccess: (data) => {
+      Swal.fire({
+        icon: "success",
+        title: "ورود با موفقیت انجام شد!",
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        didClose: () => {
+          router.push("/");
+        },
+      });
+      console.log("Login Success:", data);
+    },
+    onError: (error) => {
+      Swal.fire({
+        icon: "error",
+        title: "خطا",
+        text: error?.message || "ورود ناموفق بود",
+        confirmButtonText: "باشه",
+      });
+      console.error("Login Error:", error);
+      fetchCaptcha();
+    },
+  });
+
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    formData.append("UserName", values.nationalCode);
+    formData.append("Password", values.password);
+    formData.append("DNTCaptchaInputText", values.captcha);
+    formData.append("DNTCaptchaText", captchaText);
+    formData.append("DNTCaptchaToken", captchaToken);
+
+    loginMutation.mutate(formData);
+  };
 
   const onFocusValidate = (name) => {
-    form.validateFields([name])
-  }
+    form.validateFields([name]);
+  };
 
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
       style={{ backgroundImage: "url('/images/31.jpg')" }}
     >
-    
       <div className="absolute inset-0 bg-black opacity-60 z-0"></div>
 
-     
       <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-lg max-w-5xl w-full mx-4 flex flex-col md:flex-row overflow-hidden">
-        
-   <div className="flex-1 p-8 md:p-10 flex flex-col justify-center text-white items-center text-center animated-gradient-bg">
-  <img className='w-[150px] md:w-[200px] mb-6' src="/images/allah.svg" alt="" />
-  <div className="text-sm opacity-70 leading-relaxed">
-    <p>درگـاه سـامانه‌های یکپـارچه</p>
-    <p>سازمان بازرسی کل کشور</p>
-    <br />
-    <Link href="#">
-      <p className="hover:underline cursor-pointer">www.136.ir</p>
-    </Link>
-  </div>
-</div>
+        <div className="flex-1 p-8 md:p-10 flex flex-col justify-center text-white items-center text-center animated-gradient-bg">
+          <img
+            className="w-[150px] md:w-[200px] mb-6"
+            src="/images/allah.svg"
+            alt=""
+          />
+          <div className="text-sm opacity-70 leading-relaxed">
+            <p>درگـاه سـامانه‌های یکپـارچه</p>
+            <p>سازمان بازرسی کل کشور</p>
+            <br />
+            <Link href="#">
+              <p className="hover:underline cursor-pointer">www.136.ir</p>
+            </Link>
+          </div>
+        </div>
 
-
-      
         <div className="flex-1 p-6 md:p-10">
           <Form
             form={form}
@@ -96,15 +132,15 @@ const LoginPage = () => {
               }
               name="nationalCode"
               rules={[{ validator: validateNationalCode }]}
-              validateTrigger={['onFocus', 'onBlur', 'onChange']}
+              validateTrigger={["onFocus", "onBlur", "onChange"]}
             >
               <Input
                 maxLength={10}
-                onFocus={() => onFocusValidate('nationalCode')}
+                onFocus={() => onFocusValidate("nationalCode")}
                 className="w-full !py-1.5 !rounded-[12px]"
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '')
-                  form.setFieldsValue({ nationalCode: val })
+                  const val = e.target.value.replace(/\D/g, "");
+                  form.setFieldsValue({ nationalCode: val });
                 }}
               />
             </Form.Item>
@@ -116,11 +152,11 @@ const LoginPage = () => {
                 </span>
               }
               name="password"
-              rules={[{ required: true, message: 'اجباری' }]}
-              validateTrigger={['onFocus', 'onBlur']}
+              rules={[{ required: true, message: "اجباری" }]}
+              validateTrigger={["onFocus", "onBlur"]}
             >
               <Input.Password
-                onFocus={() => onFocusValidate('password')}
+                onFocus={() => onFocusValidate("password")}
                 className="w-full !py-1.5 !rounded-[12px]"
               />
             </Form.Item>
@@ -132,14 +168,14 @@ const LoginPage = () => {
                 </span>
               }
               name="captcha"
-              rules={[{ required: true, message: 'اجباری' }]}
-              validateTrigger={['onFocus', 'onBlur']}
+              rules={[{ required: true, message: "اجباری" }]}
+              validateTrigger={["onFocus", "onBlur"]}
             >
               <Row gutter={16} align="middle" className="flex-col sm:flex-row">
                 <Col flex="auto" className="w-full sm:w-auto mb-4 sm:mb-0">
                   <Input
                     placeholder="کد امنیتی را وارد کنید"
-                    onFocus={() => onFocusValidate('captcha')}
+                    onFocus={() => onFocusValidate("captcha")}
                     className="w-full !py-1.5 !rounded-[12px]"
                   />
                 </Col>
@@ -154,29 +190,31 @@ const LoginPage = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            setLoadingCaptcha(true)
+                            setLoadingCaptcha(true);
                             fetchCaptcha()
                               .then((res) => {
                                 if (res?.data?.dntCaptchaImage) {
-                                  setCaptchaBase64(res.data.dntCaptchaImage)
+                                  setCaptchaBase64(res.data.dntCaptchaImage);
                                 }
                               })
                               .catch(() => {
-                                message.error("خطا در دریافت کد امنیتی")
+                                message.error("خطا در دریافت کد امنیتی");
                               })
-                              .finally(() => setLoadingCaptcha(false))
+                              .finally(() => setLoadingCaptcha(false));
                           }}
                           className="text-gray-600 hover:text-blue-600 transition"
                           title="بارگذاری کپچا جدید"
                         >
                           <Icon icon="mdi:refresh" width="24" height="24" />
                         </button>
-                        <img
+                        <Image
                           src={`data:image/png;base64,${captchaBase64}`}
                           alt="کد امنیتی"
-                          className="select-none rounded"
                           width={150}
                           height={50}
+                          unoptimized={true} 
+                          draggable={false}
+                          className="select-none rounded"
                         />
                       </>
                     ) : (
@@ -198,18 +236,18 @@ const LoginPage = () => {
           </Form>
 
           <div className="mt-6 text-center text-sm space-y-2">
-            <div className='border py-1.5 border-gray-300 rounded-3xl'>
-              <Link href="#" className="text-[#135388] hover:underline">
+            <div className="border py-1.5 border-gray-300 rounded-3xl">
+              <Link href="./register" className="text-[#135388] hover:underline">
                 ثبت نام شهروند
               </Link>
             </div>
 
             <div className="flex justify-center items-center gap-4">
-              <Link href="#" className="text-[#135388] hover:underline">
+              <Link href="login/forgot" className="text-[#135388] hover:underline">
                 فراموشی رمز عبور
               </Link>
               <span>|</span>
-              <Link href="#" className="text-[#135388] hover:underline">
+              <Link href="login/changeNumber" className="text-[#135388] hover:underline">
                 تغییر شماره
               </Link>
             </div>
@@ -232,7 +270,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

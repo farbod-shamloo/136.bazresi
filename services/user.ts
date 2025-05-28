@@ -48,3 +48,21 @@ export const generateExternalUserRegisterOTPWithCaptcha = (formData) => {
       });
   });
 };
+
+
+export const LoginWithExternalCaptcha = (formData) => {
+  return new Promise((resolve, reject) => {
+    api
+      .post(
+        "/Authenticate/LoginWithExternalCaptcha",
+        formData,
+      )
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.error("Register OTP API Error:", error);
+        reject(error);
+      });
+  });
+};
