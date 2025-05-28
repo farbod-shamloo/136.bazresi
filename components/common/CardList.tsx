@@ -37,12 +37,12 @@ const CardList = () => {
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className=" max-w-7xl mx-auto">
       {/* دکمه تغییر حالت نمایش */}
       <div className="mb-6 flex justify-end">
         <button
           onClick={toggleViewMode}
-          className="bg-[#65879c] hover:bg-[#769ab1] transition text-white p-3 rounded-md shadow-md focus:outline-none focus:ring-2 "
+          className="bg-[#4c58ff] hover:bg-[#759de6] transition text-white p-3 rounded-md shadow-md focus:outline-none focus:ring-2 "
           aria-label="تغییر حالت نمایش"
           title="تغییر حالت نمایش"
         >
@@ -52,43 +52,51 @@ const CardList = () => {
 
       {/* حالت کارت */}
       {viewMode === "card" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {cards.map(({ id, title, image, Link }) => (
-            <div
-              key={id}
-              className="group bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition duration-300 ease-in-out overflow-hidden flex flex-col max-w-full sm:max-w-[400px] mx-auto"
-            >
-              <div className="w-full h-52 bg-white flex items-center justify-center">
-                <img
-                  src={image}
-                  alt={title}
-                  className="object-contain max-h-full p-3 transition-transform duration-300 group-hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <h3 className="text-center text-lg font-semibold text-gray-800 mb-4 leading-tight group-hover:text-[#65879c] transition">
-                  {title}
-                </h3>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
+  {cards.map(({ id, title, image, Link }) => (
+    <article
+      key={id}
+      className="flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer overflow-hidden"
+      onClick={() => Link && window.open(Link, "_blank")}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && Link) window.open(Link, "_blank");
+      }}
+      role="button"
+      aria-label={`مشاهده کارت ${title}`}
+    >
+      <div className="flex justify-center items-center bg-gray-50 p-6 h-48">
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          className="max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+      <div className="p-6 flex flex-col flex-grow">
+        <h3 className="text-center text-lg font-semibold text-gray-900 mb-4 truncate">
+          {title}
+        </h3>
+        {Link ? (
+          <a
+            href={Link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="mt-auto inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md text-center text-sm font-medium shadow-sm transition-colors duration-200"
+          >
+            مشاهده
+          </a>
+        ) : (
+          <span className="mt-auto text-center text-gray-400 text-sm select-none">
+            لینک موجود نیست
+          </span>
+        )}
+      </div>
+    </article>
+  ))}
+</div>
 
-                {Link ? (
-                  <a
-                    href={Link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto inline-block text-center bg-[#65879c] hover:bg-[#7999ad] text-white py-2 px-4 rounded-md transition-all duration-200 shadow-md"
-                  >
-                    مشاهده
-                  </a>
-                ) : (
-                  <span className="text-gray-400 text-sm text-center mt-auto">
-                    لینک موجود نیست
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
       )}
 
       {/* حالت جدولی */}
@@ -150,30 +158,32 @@ const CardList = () => {
 
       {/* حالت آیکونی جدید */}
       {viewMode === "icon" && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-6 justify-center">
-          {cards.map(({ id, title, image, Link }) => (
-            <div
-              key={id}
-              className="group flex flex-col items-center text-center cursor-pointer bg-white border border-gray-200 rounded-xl p-4 shadow hover:shadow-md transition"
-              onClick={() => Link && window.open(Link, "_blank")}
-              tabIndex={0}
-              role="button"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && Link) window.open(Link, "_blank");
-              }}
-            >
-              <img
-                src={image}
-                alt={title}
-                className="w-14 h-14 object-contain mb-2 transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-[#65879c]">
-                {title}
-              </span>
-            </div>
-          ))}
-        </div>
+ <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 px-4">
+  {cards.map(({ id, title, image, Link }) => (
+    <a
+      key={id}
+      href={Link || '#'}
+      target={Link ? '_blank' : undefined}
+      rel="noopener noreferrer"
+      className="flex flex-col items-center bg-white rounded-lg border border-gray-300 hover:border-indigo-500 transition-colors shadow-sm hover:shadow-lg p-6 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+      tabIndex={0}
+      aria-label={`باز کردن لینک ${title}`}
+    >
+      <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+        <img
+          src={image}
+          alt={title}
+          className="object-contain w-12 h-12 transition-transform duration-300 hover:scale-110"
+          loading="lazy"
+        />
+      </div>
+      <p className="text-center text-gray-800 font-medium text-base hover:text-indigo-600 transition-colors">
+        {title}
+      </p>
+    </a>
+  ))}
+</div>
+
       )}
     </div>
   );

@@ -11,47 +11,48 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const greeting = getGreetingByTime();
 
   return (
-    <div className="flex flex-col md:flex-row h-[700px] rounded-lg overflow-hidden shadow-md">
-      <div className="w-full md:w-4/5 p-6 bg-white overflow-auto">{children}</div>
+    <main className="min-h-[700px] flex flex-col md:flex-row gap-6 bg-gradient-to-tr from-indigo-200 via-white to-indigo-100 p-8 rounded-lg shadow-lg">
+      {/* بخش محتوا */}
+      <section className="flex-1 bg-white rounded-xl shadow-lg p-8 overflow-auto">
+        {children}
+      </section>
 
-      <div className="hidden md:block w-1/5 relative bg-gray-100">
+      {/* کارت جانبی شناور */}
+      <aside className="hidden md:flex flex-col w-80 bg-gradient-to-br from-cyan-600 to-blue-500 rounded-xl shadow-xl text-white p-6 relative overflow-hidden">
+        {/* تصویر پس‌زمینه با افکت بلر */}
         <Image
           src="/images/bazresi.jpg"
-          alt="عکس داشبورد"
+          alt="پس‌زمینه"
           fill
-          style={{ objectFit: "cover" }}
+          style={{ objectFit: "cover", filter: "blur(6px) brightness(0.7)" }}
           priority
         />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            pointerEvents: "none",
-          }}
-        />
-        <div className="relative w-full h-full">
-          <div
-            className="absolute top-1/2 left-1/2 w-48 h-full -translate-x-1/2 -translate-y-1/2 
-            rounded overflow-hidden flex flex-col items-center justify-center text-white"
-          >
-            <Image
-              src="/images/allah.svg"
-              alt="عکس دوم"
-              width={160}
-              height={160}
-              style={{ objectFit: "contain" }}
-            />
-            <p className="mt-5 text-center text-[18px]">www.136.ir</p>
 
-            <div className="absolute bottom-2 text-center">
-              <p>{greeting}</p>
-              <p>امروز {dayName} {persianDate}</p>
-              
-            </div>
+        {/* لایه تار برای خوانایی */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent pointer-events-none rounded-xl" />
+
+        {/* محتوای روی کارت */}
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <Image
+            src="/images/allah.svg"
+            alt="لوگو"
+            width={140}
+            height={140}
+            style={{ objectFit: "contain" }}
+          />
+          <h2 className="text-2xl font-bold tracking-wide drop-shadow-md">
+            www.136.ir
+          </h2>
+
+          {/* خوش‌آمدگویی و تاریخ */}
+          <div className="mt-auto text-center space-y-2">
+            <p className="text-xl font-semibold drop-shadow">{greeting}</p>
+            <p className="text-sm tracking-wide drop-shadow">
+              امروز <span className="font-semibold">{dayName}</span> {persianDate}
+            </p>
           </div>
         </div>
-      </div>
-    </div>
+      </aside>
+    </main>
   );
 }

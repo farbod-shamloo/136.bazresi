@@ -1,150 +1,145 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import HomePage from "@/components/HomePage";
 import { Icon } from "@iconify/react";
-import { Button, Dropdown, Menu } from "antd";
-import Image from "next/image";
+import HomePage from "@/components/HomePage";
 
-function page() {
+const page = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const userName = "کاربر عزیز";
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDropdownOpen]);
 
   const handleLogout = () => {
     alert("شما خارج شدید");
     setIsLoggedIn(false);
     setIsDrawerOpen(false);
+    setIsDropdownOpen(false);
   };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden flex flex-col">
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/bg.svg"
-          alt="بک‌گراند"
-          layout="fill"
-          objectFit="cover"
-          className="w-full h-full"
-        />
-      </div>
-
-      <div className="hidden md:block w-full h-[400px] bg-[#00385d]" />
-
-      <div className="flex-grow w-full bg-transparent min-h-[250px] md:min-h-[calc(100vh-400px)]" />
-
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
-        <div className="pointer-events-auto w-full max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:justify-between gap-4 md:items-center">
-            <div className="text-center md:text-right"></div>
-
-            <div className="hidden md:flex text-white text-sm gap-2 justify-center md:justify-end">
-              {!isLoggedIn && (
-                <>
-                  <Link href="user/register">
-                    <button className="bg-[#124b8a] py-2 px-5 rounded-3xl hover:bg-[#1d5799]">
-                      ثبت نام شهروند
-                    </button>
-                  </Link>
-                  <Link href="user/login">
-                    <button className="bg-[#18a0b7] py-2 px-5 rounded-3xl hover:bg-[#29b2ca]">
-                      ورود به حساب
-                    </button>
-                  </Link>
-                </>
-              )}
-              {isLoggedIn && (
-                <Dropdown
-                  overlay={
-                    <Menu
-                      className="min-w-[200px] rounded-lg shadow-lg"
-                      style={{ padding: "8px 0", borderRadius: "12px" }}
-                    >
-                      <Menu.Item
-                        key="profile"
-                        icon={
-                          <Icon
-                            icon="mdi:account-circle-outline"
-                            className="text-xl text-blue-500"
-                          />
-                        }
-                        onClick={() => alert("رفتن به پروفایل")}
-                      >
-                        پروفایل
-                      </Menu.Item>
-                      <Menu.Item
-                        key="change-password"
-                        icon={
-                          <Icon
-                            icon="mdi:lock-reset"
-                            className="text-xl text-yellow-500"
-                          />
-                        }
-                        onClick={() => alert("تغییر رمز ورود")}
-                      >
-                        تغییر رمز ورود
-                      </Menu.Item>
-                      <Menu.Item
-                        key="change-role"
-                        icon={
-                          <Icon
-                            icon="mdi:account-switch-outline"
-                            className="text-xl text-purple-500"
-                          />
-                        }
-                        onClick={() => alert("تغییر سمت")}
-                      >
-                        تغییر سمت
-                      </Menu.Item>
-                      <Menu.Divider />
-                      <Menu.Item
-                        key="logout"
-                        icon={
-                          <Icon
-                            icon="mdi:logout"
-                            className="text-xl text-red-500"
-                          />
-                        }
-                        onClick={handleLogout}
-                        danger
-                      >
-                        خروج از حساب کاربری
-                      </Menu.Item>
-                    </Menu>
-                  }
-                  trigger={["click"]}
-                  placement="bottomRight"
-                  arrow
-                >
-                  <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-full px-4 py-2 shadow-sm transition duration-150">
-                    <Icon
-                      icon="mdi:account-circle-outline"
-                      className="text-2xl text-gray-700"
-                    />
-                    <span className="text-gray-800 font-semibold">
-                      {userName}
-                    </span>
-                    <Icon
-                      icon="mdi:chevron-down"
-                      className="text-gray-500 text-lg"
-                    />
-                  </Button>
-                </Dropdown>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <HomePage />
-          </div>
+    <>
+      {/* هدر دسکتاپ */}
+      <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-md">
+        <div className="text-2xl font-extrabold cursor-default select-none tracking-wide">
+          سامانه سازمان بازرسی کل کشور
         </div>
-      </div>
 
+        <nav className="flex items-center gap-8 text-sm font-medium relative">
+          {!isLoggedIn ? (
+            <>
+              <Link href="user/register" legacyBehavior>
+                <a className="px-6 py-2 rounded-full bg-blue-800 hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+                  ثبت نام شهروند
+                </a>
+              </Link>
+              <Link href="user/login" legacyBehavior>
+                <a className="px-6 py-2 rounded-full bg-cyan-600 hover:bg-cyan-500 transition shadow-md hover:shadow-lg">
+                  ورود به حساب
+                </a>
+              </Link>
+            </>
+          ) : (
+            <div ref={dropdownRef} className="relative">
+              <button
+                aria-haspopup="true"
+                aria-expanded={isDropdownOpen}
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="flex items-center gap-3 bg-white text-blue-900 rounded-full px-5 py-2 shadow-md hover:shadow-xl transition select-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <Icon icon="mdi:account-circle-outline" className="text-3xl" />
+                <span className="font-semibold whitespace-nowrap">{userName}</span>
+                <Icon
+                  icon={isDropdownOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
+                  className="text-xl transition-transform"
+                />
+              </button>
+
+              {/* منوی کشویی */}
+              <ul
+                className={`absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl text-blue-900 py-2 transition-all duration-300 ease-in-out
+                ${
+                  isDropdownOpen
+                    ? "opacity-100 pointer-events-auto translate-y-0"
+                    : "opacity-0 pointer-events-none -translate-y-2"
+                }`}
+                role="menu"
+              >
+                <li
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={() => alert("رفتن به پروفایل")}
+                  className="flex items-center gap-3 px-5 py-2 hover:bg-blue-100 cursor-pointer transition rounded-lg"
+                  onKeyDown={(e) => e.key === "Enter" && alert("رفتن به پروفایل")}
+                >
+                  <Icon icon="mdi:account-circle-outline" className="text-xl text-blue-600" />
+                  پروفایل
+                </li>
+                <li
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={() => alert("تغییر رمز ورود")}
+                  className="flex items-center gap-3 px-5 py-2 hover:bg-yellow-100 cursor-pointer transition rounded-lg"
+                  onKeyDown={(e) => e.key === "Enter" && alert("تغییر رمز ورود")}
+                >
+                  <Icon icon="mdi:lock-reset" className="text-xl text-yellow-600" />
+                  تغییر رمز ورود
+                </li>
+                <li
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={() => alert("تغییر سمت")}
+                  className="flex items-center gap-3 px-5 py-2 hover:bg-purple-100 cursor-pointer transition rounded-lg"
+                  onKeyDown={(e) => e.key === "Enter" && alert("تغییر سمت")}
+                >
+                  <Icon icon="mdi:account-switch-outline" className="text-xl text-purple-600" />
+                  تغییر سمت
+                </li>
+                <hr className="my-2 border-gray-300" />
+                <li
+                  role="menuitem"
+                  tabIndex={0}
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 px-5 py-2 hover:bg-red-100 cursor-pointer text-red-600 font-semibold rounded-lg transition"
+                  onKeyDown={(e) => e.key === "Enter" && handleLogout()}
+                >
+                  <Icon icon="mdi:logout" className="text-xl" />
+                  خروج از حساب کاربری
+                </li>
+              </ul>
+            </div>
+          )}
+        </nav>
+      </header>
+
+      {/* هدر موبایل بالا */}
       <div className="md:hidden fixed top-0 left-0 w-full bg-[#004974] text-white text-base shadow-lg py-3 px-5 z-50">
         <span>سامانه سازمان بازرسی کل کشور</span>
       </div>
 
+      {/* منوی موبایل پایین */}
       {!isLoggedIn ? (
         <div className="md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] bg-gradient-to-r from-[#004974] to-[#006f95] text-white text-base rounded-3xl shadow-xl flex items-center justify-between px-6 py-4 z-50">
           <div className="flex items-center gap-3">
@@ -175,136 +170,103 @@ function page() {
         </div>
       )}
 
+      {/* محتوای اصلی با margin top برای جبران هدر موبایل */}
+      <main className="pt-12 md:pt-20">
+        <HomePage />
+      </main>
+
+      {/* منوی دراور موبایل */}
       {isDrawerOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-[rgba(0,0,0,0.7)] z-50 flex justify-center items-end"
+          className="fixed inset-0 bg-[rgba(0,0,0,0.7)] z-50 flex flex-col justify-end"
           role="dialog"
           aria-modal="true"
           aria-labelledby="drawer-title"
         >
-          <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slide-up shadow-2xl">
-            <div className="flex justify-between items-center mb-5">
+          <div className="bg-white rounded-t-3xl p-6 max-w-md mx-auto w-full animate-slide-up shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
               <h2
                 id="drawer-title"
-                className="text-[#004974] font-extrabold text-lg"
+                className="text-blue-900 font-extrabold text-xl tracking-wide"
               >
                 منوی دسترسی
               </h2>
               <button
                 onClick={() => setIsDrawerOpen(false)}
                 aria-label="بستن منو"
-                className="p-2 rounded-full hover:bg-gray-100 transition"
+                className="p-2 rounded-full hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <Icon icon="mdi:close" className="text-3xl text-gray-700" />
+                <Icon icon="mdi:close" className="text-2xl text-blue-900" />
               </button>
             </div>
 
-            <nav className="flex flex-col gap-5">
-              {!isLoggedIn ? (
-                <>
-                  <Link
-                    href="user/register"
+            {!isLoggedIn ? (
+              <>
+                <Link href="user/register" legacyBehavior>
+                  <a
                     onClick={() => setIsDrawerOpen(false)}
+                    className="block mb-3 px-6 py-3 rounded-full bg-blue-800 hover:bg-blue-700 transition text-center text-white shadow-md hover:shadow-lg"
                   >
-                    <button className="w-full bg-[#004974] hover:bg-[#006f95] text-white py-3 rounded-3xl font-semibold shadow-md transition">
-                      ثبت نام شهروند
-                    </button>
-                  </Link>
-                  <Link
-                    href="user/login"
+                    ثبت نام شهروند
+                  </a>
+                </Link>
+                <Link href="user/login" legacyBehavior>
+                  <a
                     onClick={() => setIsDrawerOpen(false)}
+                    className="block px-6 py-3 rounded-full bg-cyan-600 hover:bg-cyan-500 transition text-center text-white shadow-md hover:shadow-lg"
                   >
-                    <button className="w-full bg-[#0098b3] hover:bg-[#00b8d4] text-white py-3 rounded-3xl font-semibold shadow-md transition">
-                      ورود به حساب
-                    </button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Dropdown
-                    overlay={
-                      <Menu
-                        className="min-w-[200px] rounded-lg shadow-lg"
-                        style={{ padding: "8px 0", borderRadius: "12px" }}
-                      >
-                        <Menu.Item
-                          key="profile"
-                          icon={
-                            <Icon
-                              icon="mdi:account-circle-outline"
-                              className="text-xl text-blue-500"
-                            />
-                          }
-                          onClick={() => alert("رفتن به پروفایل")}
-                        >
-                          پروفایل
-                        </Menu.Item>
-                        <Menu.Item
-                          key="change-password"
-                          icon={
-                            <Icon
-                              icon="mdi:lock-reset"
-                              className="text-xl text-yellow-500"
-                            />
-                          }
-                          onClick={() => alert("تغییر رمز ورود")}
-                        >
-                          تغییر رمز ورود
-                        </Menu.Item>
-                        <Menu.Item
-                          key="change-role"
-                          icon={
-                            <Icon
-                              icon="mdi:account-switch-outline"
-                              className="text-xl text-purple-500"
-                            />
-                          }
-                          onClick={() => alert("تغییر سمت")}
-                        >
-                          تغییر سمت
-                        </Menu.Item>
-                        <Menu.Divider />
-                        <Menu.Item
-                          key="logout"
-                          icon={
-                            <Icon
-                              icon="mdi:logout"
-                              className="text-xl text-red-500"
-                            />
-                          }
-                          onClick={handleLogout}
-                          danger
-                        >
-                          خروج از حساب کاربری
-                        </Menu.Item>
-                      </Menu>
-                    }
-                    trigger={["click"]}
-                    placement="bottomRight"
-                    arrow
-                  >
-                    <Button className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-full px-4 py-2 shadow-sm transition duration-150">
-                      <Icon
-                        icon="mdi:account-circle-outline"
-                        className="text-2xl text-gray-700"
-                      />
-                      <span className="text-gray-800 font-semibold">
-                        {userName}
-                      </span>
-                      <Icon
-                        icon="mdi:chevron-down"
-                        className="text-gray-500 text-lg"
-                      />
-                    </Button>
-                  </Dropdown>
-                </>
-              )}
-            </nav>
+                    ورود به حساب
+                  </a>
+                </Link>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    alert("رفتن به پروفایل");
+                    setIsDrawerOpen(false);
+                  }}
+                  className="w-full text-blue-900 font-semibold rounded-lg py-3 mb-2 hover:bg-blue-100 transition flex items-center gap-3 px-5"
+                >
+                  <Icon icon="mdi:account-circle-outline" className="text-xl" />
+                  پروفایل
+                </button>
+                <button
+                  onClick={() => {
+                    alert("تغییر رمز ورود");
+                    setIsDrawerOpen(false);
+                  }}
+                  className="w-full text-yellow-700 font-semibold rounded-lg py-3 mb-2 hover:bg-yellow-100 transition flex items-center gap-3 px-5"
+                >
+                  <Icon icon="mdi:lock-reset" className="text-xl" />
+                  تغییر رمز ورود
+                </button>
+                <button
+                  onClick={() => {
+                    alert("تغییر سمت");
+                    setIsDrawerOpen(false);
+                  }}
+                  className="w-full text-purple-700 font-semibold rounded-lg py-3 mb-2 hover:bg-purple-100 transition flex items-center gap-3 px-5"
+                >
+                  <Icon icon="mdi:account-switch-outline" className="text-xl" />
+                  تغییر سمت
+                </button>
+                <hr className="my-4 border-gray-300" />
+                <button
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  className="w-full text-red-600 font-bold rounded-lg py-3 hover:bg-red-100 transition flex items-center gap-3 px-5"
+                >
+                  <Icon icon="mdi:logout" className="text-xl" />
+                  خروج از حساب کاربری
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* انیمیشن دراور */}
       <style jsx>{`
         @keyframes slide-up {
           from {
@@ -317,11 +279,11 @@ function page() {
           }
         }
         .animate-slide-up {
-          animation: slide-up 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: slide-up 0.3s ease forwards;
         }
       `}</style>
-    </div>
+    </>
   );
-}
+};
 
 export default page;
