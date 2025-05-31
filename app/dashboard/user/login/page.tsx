@@ -171,15 +171,16 @@ const LoginPage = () => {
               rules={[{ required: true, message: "اجباری" }]}
               validateTrigger={["onFocus", "onBlur"]}
             >
-              <Row gutter={16} align="middle" className="flex-col sm:flex-row">
-                <Col flex="auto" className="w-full sm:w-auto mb-4 sm:mb-0">
+              <Row gutter={[12, 12]} align="middle" wrap>
+                <Col flex="1 1 150px" className="min-w-[150px]">
                   <Input
                     placeholder="کد امنیتی را وارد کنید"
                     onFocus={() => onFocusValidate("captcha")}
                     className="w-full !py-1.5 !rounded-[12px]"
                   />
                 </Col>
-                <Col xs={24} sm={12}>
+
+                <Col flex="0 0 auto" className="min-w-[180px]">
                   <div className="flex items-center gap-3 h-[50px] justify-center sm:justify-start">
                     {captchaIsLoading || loadingCaptcha ? (
                       <div className="w-[150px] h-[50px] flex items-center justify-center">
@@ -212,7 +213,7 @@ const LoginPage = () => {
                           alt="کد امنیتی"
                           width={150}
                           height={50}
-                          unoptimized={true} 
+                          unoptimized={true}
                           draggable={false}
                           className="select-none rounded"
                         />
@@ -236,18 +237,26 @@ const LoginPage = () => {
           </Form>
 
           <div className="mt-6 text-center text-sm space-y-2">
-            <div className="border py-1.5 border-gray-300 rounded-3xl">
+          <div>
               <Link href="./register" className="text-[#135388] hover:underline">
+              <Button className="w-[100%] border py-1.5 border-gray-300 rounded-3xl">
                 ثبت نام شهروند
-              </Link>
-            </div>
+              </Button>
+            </Link>
 
+          </div>
             <div className="flex justify-center items-center gap-4">
-              <Link href="login/forgot" className="text-[#135388] hover:underline">
+              <Link
+                href="login/forgot"
+                className="text-[#135388] hover:underline"
+              >
                 فراموشی رمز عبور
               </Link>
               <span>|</span>
-              <Link href="login/changeNumber" className="text-[#135388] hover:underline">
+              <Link
+                href="login/changeNumber"
+                className="text-[#135388] hover:underline"
+              >
                 تغییر شماره
               </Link>
             </div>
@@ -258,11 +267,35 @@ const LoginPage = () => {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button className="bg-[#135388] text-white rounded-lg px-6 py-2 hover:bg-[#0f3768] w-full sm:w-auto">
+            <div className="flex flex-row justify-center items-center gap-4">
+              <Button
+                onClick={() =>
+                  (window.location.href = "https://sso.my.gov.ir/login")
+                }
+                className="bg-[#135388] text-white rounded-lg px-6 py-2 hover:bg-[#0f3768] w-auto flex items-center justify-center gap-2"
+              >
+                <Image
+                  src="/images/dolatMan.png"
+                  alt="دولت من"
+                  width={20}
+                  height={20}
+                />
                 دولت من
               </Button>
-              <Button className="bg-[#ccc] text-[#333] rounded-lg px-6 py-2 hover:bg-[#bbb] w-full sm:w-auto">
+
+              <Button
+                onClick={() =>
+                  (window.location.href =
+                    "https://iehraz.adliran.ir/Login/Authenticate?ReturnUrl=https://my.adliran.ir/RealPerson/Index&SystemName=RealPersonService&isSelectNaturalPerson=True&isSelectNaturalForigenPerson=True&isSelectLegalPerson=False&isSelectJudPerson=False&LoginTitle=%d8%ae%d8%af%d9%85%d8%a7%d8%aa%20%d9%82%d8%b6%d8%a7%db%8c%db%8c%20%d9%85%d9%86")
+                }
+                className="bg-[#ccc] text-[#333] rounded-lg px-6 py-2 hover:bg-[#bbb] w-auto flex items-center justify-center gap-2"
+              >
+                <Image
+                  src="/images/sanalogo.png"
+                  alt="ثنا قوه قضاییه"
+                  width={20}
+                  height={20}
+                />
                 ثنا قوه قضاییه
               </Button>
             </div>

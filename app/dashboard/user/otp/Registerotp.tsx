@@ -51,7 +51,7 @@ function Registerotp({ setStep }) {
       setCaptchaBase64(captchaData.dntCaptchaImage);
       setCaptchaText(captchaData.dntCaptchaText);
       setCaptchaToken(captchaData.dntCaptchaToken);
-      setInitialLoading(false); // کپچا بارگذاری شد => لودینگ تمام شود
+      setInitialLoading(false);
     }
   }, [captchaData]);
 

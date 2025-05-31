@@ -4,12 +4,15 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import HomePage from "@/components/HomePage";
+import Image from "next/image";
+
 
 const page = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const userName = "کاربر عزیز";
+  const [activePage, setActivePage] = useState("home");
+  const userName = "فربد شاملونسب";
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +44,6 @@ const page = () => {
 
   return (
     <>
-      {/* هدر دسکتاپ */}
       <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-md">
         <div className="text-2xl font-extrabold cursor-default select-none tracking-wide">
           سامانه سازمان بازرسی کل کشور
@@ -70,14 +72,15 @@ const page = () => {
                 className="flex items-center gap-3 bg-white text-blue-900 rounded-full px-5 py-2 shadow-md hover:shadow-xl transition select-none focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 <Icon icon="mdi:account-circle-outline" className="text-3xl" />
-                <span className="font-semibold whitespace-nowrap">{userName}</span>
+                <span className="font-semibold whitespace-nowrap">
+                  {userName}
+                </span>
                 <Icon
                   icon={isDropdownOpen ? "mdi:chevron-up" : "mdi:chevron-down"}
                   className="text-xl transition-transform"
                 />
               </button>
 
-              {/* منوی کشویی */}
               <ul
                 className={`absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl text-blue-900 py-2 transition-all duration-300 ease-in-out
                 ${
@@ -90,11 +93,19 @@ const page = () => {
                 <li
                   role="menuitem"
                   tabIndex={0}
-                  onClick={() => alert("رفتن به پروفایل")}
+                  onClick={() => {
+                    setActivePage("profile");
+                    setIsDropdownOpen(false);
+                  }}
                   className="flex items-center gap-3 px-5 py-2 hover:bg-blue-100 cursor-pointer transition rounded-lg"
-                  onKeyDown={(e) => e.key === "Enter" && alert("رفتن به پروفایل")}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && alert("رفتن به پروفایل")
+                  }
                 >
-                  <Icon icon="mdi:account-circle-outline" className="text-xl text-blue-600" />
+                  <Icon
+                    icon="mdi:account-circle-outline"
+                    className="text-xl text-blue-600"
+                  />
                   پروفایل
                 </li>
                 <li
@@ -102,9 +113,14 @@ const page = () => {
                   tabIndex={0}
                   onClick={() => alert("تغییر رمز ورود")}
                   className="flex items-center gap-3 px-5 py-2 hover:bg-yellow-100 cursor-pointer transition rounded-lg"
-                  onKeyDown={(e) => e.key === "Enter" && alert("تغییر رمز ورود")}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && alert("تغییر رمز ورود")
+                  }
                 >
-                  <Icon icon="mdi:lock-reset" className="text-xl text-yellow-600" />
+                  <Icon
+                    icon="mdi:lock-reset"
+                    className="text-xl text-yellow-600"
+                  />
                   تغییر رمز ورود
                 </li>
                 <li
@@ -114,7 +130,10 @@ const page = () => {
                   className="flex items-center gap-3 px-5 py-2 hover:bg-purple-100 cursor-pointer transition rounded-lg"
                   onKeyDown={(e) => e.key === "Enter" && alert("تغییر سمت")}
                 >
-                  <Icon icon="mdi:account-switch-outline" className="text-xl text-purple-600" />
+                  <Icon
+                    icon="mdi:account-switch-outline"
+                    className="text-xl text-purple-600"
+                  />
                   تغییر سمت
                 </li>
                 <hr className="my-2 border-gray-300" />
@@ -134,12 +153,17 @@ const page = () => {
         </nav>
       </header>
 
-      {/* هدر موبایل بالا */}
-      <div className="md:hidden fixed top-0 left-0 w-full bg-[#004974] text-white text-base shadow-lg py-3 px-5 z-50">
-        <span>سامانه سازمان بازرسی کل کشور</span>
+      <div className="flex items-center md:hidden fixed top-0 left-0 w-full bg-[#004974] text-white text-base shadow-lg py-3 px-5 z-50">
+        <Image 
+        src="/images/136.png"
+        alt="136"
+        width={50}
+        height={50}
+        className="mr-3"
+        />
+        <span>درگاه سامانه‌های یکپارچه </span>
       </div>
 
-      {/* منوی موبایل پایین */}
       {!isLoggedIn ? (
         <div className="md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] bg-gradient-to-r from-[#004974] to-[#006f95] text-white text-base rounded-3xl shadow-xl flex items-center justify-between px-6 py-4 z-50">
           <div className="flex items-center gap-3">
@@ -170,12 +194,10 @@ const page = () => {
         </div>
       )}
 
-      {/* محتوای اصلی با margin top برای جبران هدر موبایل */}
       <main className="pt-12 md:pt-20">
-        <HomePage />
+        <HomePage activePage={activePage} />
       </main>
 
-      {/* منوی دراور موبایل */}
       {isDrawerOpen && (
         <div
           className="fixed inset-0 bg-[rgba(0,0,0,0.7)] z-50 flex flex-col justify-end"
@@ -223,8 +245,8 @@ const page = () => {
               <>
                 <button
                   onClick={() => {
-                    alert("رفتن به پروفایل");
-                    setIsDrawerOpen(false);
+                    setActivePage("profile");
+                    setIsDropdownOpen(false);
                   }}
                   className="w-full text-blue-900 font-semibold rounded-lg py-3 mb-2 hover:bg-blue-100 transition flex items-center gap-3 px-5"
                 >

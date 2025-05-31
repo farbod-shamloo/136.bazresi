@@ -38,7 +38,7 @@ const CardList = () => {
 
   return (
     <div className=" max-w-7xl mx-auto">
-      {/* دکمه تغییر حالت نمایش */}
+  
       <div className="mb-6 flex justify-end">
         <button
           onClick={toggleViewMode}
@@ -50,13 +50,12 @@ const CardList = () => {
         </button>
       </div>
 
-      {/* حالت کارت */}
       {viewMode === "card" && (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4 max-w-6xl mx-auto">
   {cards.map(({ id, title, image, Link }) => (
-    <article
+    <div
       key={id}
-      className="flex flex-col bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer overflow-hidden"
+      className="flex flex-col border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-colors duration-200 cursor-pointer"
       onClick={() => Link && window.open(Link, "_blank")}
       tabIndex={0}
       onKeyDown={(e) => {
@@ -65,16 +64,16 @@ const CardList = () => {
       role="button"
       aria-label={`مشاهده کارت ${title}`}
     >
-      <div className="flex justify-center items-center bg-gray-50 p-6 h-48">
+      <div className="bg-white p-4 h-40 flex items-center justify-center">
         <img
           src={image}
           alt={title}
           loading="lazy"
-          className="max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+          className="h-full object-contain"
         />
       </div>
-      <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-center text-lg font-semibold text-gray-900 mb-4 truncate">
+      <div className="border-t border-gray-100 px-4 py-3">
+        <h3 className="text-sm font-medium text-gray-800 text-center truncate">
           {title}
         </h3>
         {Link ? (
@@ -83,77 +82,65 @@ const CardList = () => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="mt-auto inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md text-center text-sm font-medium shadow-sm transition-colors duration-200"
+            className="block text-center text-[#135388] text-sm mt-2 hover:underline"
           >
-            مشاهده
+            مشاهده لینک
           </a>
         ) : (
-          <span className="mt-auto text-center text-gray-400 text-sm select-none">
-            لینک موجود نیست
+          <span className="block text-center text-gray-400 text-sm mt-2 select-none">
+            لینک ندارد
           </span>
         )}
       </div>
-    </article>
+    </div>
   ))}
 </div>
 
+
       )}
 
-      {/* حالت جدولی */}
+    
       {viewMode === "table" && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-300 shadow-md rounded-lg overflow-hidden text-sm sm:text-base">
-            <thead className="bg-[#65879c] text-white">
-              <tr>
-                <th className="p-2 sm:p-3 text-center">ردیف</th>
-                <th className="p-2 sm:p-3 text-center">تصویر</th>
-                <th className="p-2 sm:p-3 text-center">عنوان</th>
-                <th className="p-2 sm:p-3 text-center">لینک</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cards.map(({ id, title, image, Link }, index) => (
-                <tr
-                  key={id}
-                  className={`text-center border-b border-gray-300 ${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  } hover:bg-blue-100 transition cursor-pointer`}
-                  onClick={() => Link && window.open(Link, "_blank")}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && Link) window.open(Link, "_blank");
-                  }}
-                >
-                  <td className="p-1 sm:p-2">{index + 1}</td>
-                  <td className="p-1 sm:p-2">
-                    <img
-                      src={image}
-                      alt={title}
-                      className="w-12 h-12 sm:w-16 sm:h-16 object-contain mx-auto rounded"
-                      loading="lazy"
-                    />
-                  </td>
-                  <td className="p-1 sm:p-2">{title}</td>
-                  <td className="p-1 sm:p-2">
-                    {Link ? (
-                      <a
-                        href={Link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#65879c] underline hover:text-[#6f8fa3]"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        مشاهده
-                      </a>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+       <div className="grid gap-4 mt-6 sm:grid-cols-2 lg:grid-cols-3">
+  {cards.map(({ id, title, image, Link }, index) => (
+    <div
+      key={id}
+      className="bg-white rounded-xl shadow hover:shadow-md transition border border-gray-200 p-4 cursor-pointer hover:bg-blue-50"
+      onClick={() => Link && window.open(Link, "_blank")}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && Link) window.open(Link, "_blank");
+      }}
+    >
+      <div className="flex items-center gap-4 mb-4">
+        <div className="text-sm text-gray-500 font-medium bg-gray-100 w-8 h-8 flex items-center justify-center rounded-full">
+          {index + 1}
         </div>
+        <img
+          src={image}
+          alt={title}
+          className="w-14 h-14 object-contain rounded-md border"
+          loading="lazy"
+        />
+      </div>
+      <h3 className="text-base font-semibold text-gray-800 mb-2">{title}</h3>
+      {Link ? (
+        <a
+          href={Link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-[#135388] underline hover:text-[#0d3d66]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          مشاهده لینک
+        </a>
+      ) : (
+        <span className="text-sm text-gray-400">لینکی موجود نیست</span>
+      )}
+    </div>
+  ))}
+</div>
+
       )}
 
       {/* حالت آیکونی جدید */}
