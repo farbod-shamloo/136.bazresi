@@ -9,7 +9,7 @@
         "id": 2,
         "title": "گزارش فساد ناشناس",
         "image": "/images/2.png",
-        "Link" : ""
+        "Link" : "./report-form"
     },
     {
         "id": 3,
@@ -27,12 +27,13 @@
         "id": 5,
         "title": "تماس با 136",
         "image": "/images/5.png",
+        "phone": "+131",
         "Link" : ""
     },
     {
         "id": 6,
         "title": "پیگیری وضعیت گزارش فساد ناشناس",
         "image": "/images/6.png",
-        "Link" : ""
+        "Link" : "./report-status"
     }
     ]

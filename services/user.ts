@@ -29,6 +29,20 @@ export const getCaptcha = () => {
   });
 };
 
+export const createCaptcha = () => {
+  return new Promise((resolve, reject) => {
+    api
+      .get("/Authenticate/CreateCaptcha")
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((err) => {
+        console.error("Captcha API Error:", err);
+        reject(err);
+      });
+  });
+};
+
 export const generateExternalUserRegisterOTPWithCaptcha = (formData) => {
   return new Promise((resolve, reject) => {
     api

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 import HomePage from "@/components/HomePage";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 
 const page = () => {
@@ -35,16 +36,51 @@ const page = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
-  const handleLogout = () => {
-    alert("شما خارج شدید");
-    setIsLoggedIn(false);
-    setIsDrawerOpen(false);
-    setIsDropdownOpen(false);
-  };
+
+
+const handleLogout = () => {
+  const toastId = toast.info(
+    ({ closeToast }) => (
+      <div className="flex flex-col items-start gap-2">
+        <p>آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+        <div className="flex gap-2 self-end">
+          <button
+            className="bg-red-500 text-white px-3 py-1 rounded"
+            onClick={() => {
+              toast.dismiss(toastId); 
+              toast.success("با موفقیت خارج شدید");
+              setIsLoggedIn(false);
+              setIsDrawerOpen(false);
+              setIsDropdownOpen(false);
+            }}
+          >
+            بله
+          </button>
+          <button
+            className="bg-gray-300 text-black px-3 py-1 rounded"
+            onClick={() => {
+              toast.dismiss(toastId); 
+            }}
+          >
+            خیر
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      position: "top-center",
+      autoClose: false, 
+      closeOnClick: false,
+      closeButton: false,
+      draggable: false,
+    }
+  );
+};
+
 
   return (
     <>
-      <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-md">
+      <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gradient-to-r from-[#004974] to-[#006f95] text-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-md">
         <div className="text-2xl font-extrabold cursor-default select-none tracking-wide">
           سامانه سازمان بازرسی کل کشور
         </div>
@@ -69,7 +105,7 @@ const page = () => {
                 aria-haspopup="true"
                 aria-expanded={isDropdownOpen}
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-3 bg-white text-blue-900 rounded-full px-5 py-2 shadow-md hover:shadow-xl transition select-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="flex items-center gap-3 bg-white text-blue-900 rounded-full px-5 py-2 shadow-md hover:shadow-xl transition select-none focus:outline-none focus:ring-2 "
               >
                 <Icon icon="mdi:account-circle-outline" className="text-3xl" />
                 <span className="font-semibold whitespace-nowrap">
