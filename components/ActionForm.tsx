@@ -86,9 +86,9 @@ const ActionForm = ({ onSubmit, type }) => {
     }
   };
 
-  // اگر خواستی روی کلیک آیکون بک کاری انجام بدی می‌تونی handleBack رو اضافه کنی:
+
   const handleBack = () => {
-    // مثلا history.back() یا router.back() اگر از next/router استفاده می‌کنی
+  
     window.history.back();
   };
 
@@ -105,7 +105,7 @@ const ActionForm = ({ onSubmit, type }) => {
         <ArrowLeftOutlined style={{ fontSize: 20 }} />
       </div>
 
-      {/* کد ملی */}
+     
       <Form.Item
         label={
           <span>
@@ -127,7 +127,7 @@ const ActionForm = ({ onSubmit, type }) => {
         />
       </Form.Item>
 
-      {/* شماره همراه */}
+     
       <Form.Item
         label={
           <span>
@@ -152,7 +152,7 @@ const ActionForm = ({ onSubmit, type }) => {
         />
       </Form.Item>
 
-      {/* کد امنیتی + کپچا */}
+     
       <Form.Item
         label={
           <span>

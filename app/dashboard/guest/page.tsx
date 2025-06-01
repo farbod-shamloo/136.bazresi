@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 const page = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activePage, setActivePage] = useState("home");
   const userName = "فربد شاملونسب";
@@ -26,6 +26,8 @@ const page = () => {
         setIsDropdownOpen(false);
       }
     };
+
+    
 
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -203,7 +205,7 @@ const handleLogout = () => {
       {!isLoggedIn ? (
         <div className="md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] bg-gradient-to-r from-[#004974] to-[#006f95] text-white text-base rounded-3xl shadow-xl flex items-center justify-between px-6 py-4 z-50">
           <div className="flex items-center gap-3">
-            <Icon icon="mdi:user-circle" className="text-3xl" />
+            <Icon icon="mdi:user-circle" className="text-[30px]" />
             <span className="font-semibold">کاربر مهمان</span>
           </div>
           <button
@@ -211,7 +213,7 @@ const handleLogout = () => {
             aria-label="باز کردن منو"
             className="bg-white text-[#004974] p-3 rounded-full shadow-md hover:bg-gray-100 transition"
           >
-            <Icon icon="mdi:menu" className="text-3xl" />
+            <Icon icon="mdi:menu" className="text-[25px]" />
           </button>
         </div>
       ) : (

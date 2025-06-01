@@ -38,9 +38,7 @@ const ReportStatusPage = () => {
 
   const onFinish = (values: any) => {
     const { trackingNumber, captcha } = values;
-    // کپچا ساده چک شود
-    // اگر کپچا درست نبود پیام خطا بده
-    // توجه: در این نمونه فقط چک میکنیم کپچا خالی نباشد
+   
     message.success(`وضعیت گزارش با شماره رهگیری ${trackingNumber} بررسی شد (نمونه)`);
   };
 
