@@ -1,0 +1,21 @@
+{
+  "name": "درگـاه سـامانه‌های یکپـارچه سازمان بازرسی کل کشور",
+  "short_name": "136",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "description": "توضیح درباره اپ",
+  "icons": [
+    {
+      "src": "/icons/136.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/136.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
