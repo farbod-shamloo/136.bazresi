@@ -80,11 +80,11 @@ const CardList = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-8xl mx-auto ">
       <div className="mb-6 flex justify-end">
         <button
           onClick={toggleViewMode}
-          className="bg-[#4c58ff] hover:bg-[#759de6] transition text-white p-3 rounded-md shadow-md focus:outline-none focus:ring-2"
+          className="bg-[#006e94] hover:bg-[#006f94da] transition text-white p-3 rounded-md shadow-md focus:outline-none focus:ring-2"
           aria-label="تغییر حالت نمایش"
           title="تغییر حالت نمایش"
         >
@@ -92,7 +92,7 @@ const CardList = () => {
         </button>
       </div>
 
-      {/* لودینگ */}
+      
       {loading ? (
         <div className="flex justify-center items-center h-60 text-gray-500 text-lg">
           <Icon icon="line-md:loading-twotone-loop" width="40" height="40" className="animate-spin mr-2" />
@@ -156,7 +156,7 @@ const CardList = () => {
   {filteredCards.map(({ id, title, image, Link }, index) => (
     <div
       key={id}
-      className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm hover:shadow-md transition cursor-pointer"
+      className="flex items-center justify-between rounded-xl border border-gray-100 bg- px-4 py-3 shadow-sm hover:shadow-md transition cursor-pointer"
       onClick={() => handleClick(id, Link)}
     >
       <div className="flex items-center gap-3">
@@ -176,7 +176,7 @@ const CardList = () => {
             href={Link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[12px] p-1 text-white bg-blue-800 rounded-3xl hover:underline"
+            className="text-[12px] p-1 text-white bg-[#006e94] rounded-3xl hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
             مشاهده لینک
