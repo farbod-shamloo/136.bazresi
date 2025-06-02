@@ -31,9 +31,6 @@ api.interceptors.response.use(
       "خطایی رخ داده است";
 
     switch (status) {
-      case 401:
-        window.location.href = "/guest";
-        break;
       case 404:
         window.location.href = "/*";
         break;

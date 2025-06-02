@@ -101,16 +101,18 @@ const LoginPage = () => {
 
       <div className="relative z-10 bg-white bg-opacity-90 rounded-2xl shadow-lg max-w-5xl w-full mx-4 flex flex-col md:flex-row overflow-hidden">
         <div className="flex-1 p-8 md:p-10 flex flex-col justify-center text-white items-center text-center animated-gradient-bg">
-          <img
-            className="w-[150px] md:w-[200px] mb-6"
+          <Image
             src="/images/allah.svg"
-            alt=""
+            alt="Allah"
+            width={200}
+            height={200}
+            className="w-[150px] md:w-[200px] mb-6 h-auto"
           />
           <div className="text-sm opacity-70 leading-relaxed">
             <p>درگـاه سـامانه‌های یکپـارچه</p>
             <p>سازمان بازرسی کل کشور</p>
             <br />
-            <Link href="#">
+            <Link href="/">
               <p className="hover:underline cursor-pointer">www.136.ir</p>
             </Link>
           </div>
@@ -237,14 +239,16 @@ const LoginPage = () => {
           </Form>
 
           <div className="mt-6 text-center text-sm space-y-2">
-          <div>
-              <Link href="./register" className="text-[#135388] hover:underline">
-              <Button className="w-[100%] border py-1.5 border-gray-300 rounded-3xl">
-                ثبت نام شهروند
-              </Button>
-            </Link>
-
-          </div>
+            <div>
+              <Link
+                href="./register"
+                className="text-[#135388] hover:underline"
+              >
+                <Button className="w-[100%] border py-1.5 border-gray-300 rounded-3xl">
+                  ثبت نام شهروند
+                </Button>
+              </Link>
+            </div>
             <div className="flex justify-center items-center gap-4">
               <Link
                 href="login/forgot"

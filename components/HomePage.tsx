@@ -10,6 +10,7 @@ function HomePage({ activePage }) {
         {activePage === "home" && <CardList />}
         {activePage === "profile" && <ProfilePage />}
       </DashboardLayout>
+     
     </div>
   );
 }

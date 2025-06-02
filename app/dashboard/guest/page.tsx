@@ -6,14 +6,40 @@ import { Icon } from "@iconify/react";
 import HomePage from "@/components/HomePage";
 import Image from "next/image";
 import { toast } from "react-toastify";
-
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUsers } from "@/services/user";
 
 const page = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activePage, setActivePage] = useState("home");
-  const userName = "فربد شاملونسب";
+
+const {
+  data: user,
+  isLoading,
+  isError,
+  error,
+} = useQuery({
+  queryKey: ["currentUser"],
+  queryFn: getCurrentUsers,
+  retry: false, 
+  onError: (error) => {
+    if (error?.response?.status === 401) {
+      window.location.href = "/dashboard/guest"; 
+    }
+  },
+});
+
+  const userName = user?.name || "کاربر مهمان";
+
+  useEffect(() => {
+  if (user) {
+    setIsLoggedIn(true);
+  } else {
+    setIsLoggedIn(false);
+  }
+}, [user]);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -27,8 +53,6 @@ const page = () => {
       }
     };
 
-    
-
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -38,53 +62,50 @@ const page = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
-
-
-const handleLogout = () => {
-  const toastId = toast.info(
-    ({ closeToast }) => (
-      <div className="flex flex-col items-start gap-2">
-        <p>آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
-        <div className="flex gap-2 self-end">
-          <button
-            className="bg-red-500 text-white px-3 py-1 rounded"
-            onClick={() => {
-              toast.dismiss(toastId); 
-              toast.success("با موفقیت خارج شدید");
-              setIsLoggedIn(false);
-              setIsDrawerOpen(false);
-              setIsDropdownOpen(false);
-            }}
-          >
-            بله
-          </button>
-          <button
-            className="bg-gray-300 text-black px-3 py-1 rounded"
-            onClick={() => {
-              toast.dismiss(toastId); 
-            }}
-          >
-            خیر
-          </button>
+  const handleLogout = () => {
+    const toastId = toast.info(
+      ({ closeToast }) => (
+        <div className="flex flex-col items-start gap-2">
+          <p>آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+          <div className="flex gap-2 self-end">
+            <button
+              className="bg-red-500 text-white px-3 py-1 rounded"
+              onClick={() => {
+                toast.dismiss(toastId);
+                toast.success("با موفقیت خارج شدید");
+                setIsLoggedIn(false);
+                setIsDrawerOpen(false);
+                setIsDropdownOpen(false);
+              }}
+            >
+              بله
+            </button>
+            <button
+              className="bg-gray-300 text-black px-3 py-1 rounded"
+              onClick={() => {
+                toast.dismiss(toastId);
+              }}
+            >
+              خیر
+            </button>
+          </div>
         </div>
-      </div>
-    ),
-    {
-      position: "top-center",
-      autoClose: false, 
-      closeOnClick: false,
-      closeButton: false,
-      draggable: false,
-    }
-  );
-};
-
+      ),
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        closeButton: false,
+        draggable: false,
+      }
+    );
+  };
 
   return (
     <>
       <header className="hidden md:flex items-center justify-between px-10 py-4 bg-gradient-to-r from-[#004974] to-[#006f95] text-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-md">
         <div className="text-2xl font-extrabold cursor-default select-none tracking-wide">
-          سامانه سازمان بازرسی کل کشور
+          درگاه سامانه‌های یکپارچه سازمان بازرسی کل کشور
         </div>
 
         <nav className="flex items-center gap-8 text-sm font-medium relative">
@@ -192,12 +213,12 @@ const handleLogout = () => {
       </header>
 
       <div className="flex items-center md:hidden fixed top-0 left-0 w-full bg-[#004974] text-white text-base shadow-lg py-3 px-5 z-50">
-        <Image 
-        src="/images/136.png"
-        alt="136"
-        width={50}
-        height={50}
-        className="mr-3"
+        <Image
+          src="/images/136.png"
+          alt="136"
+          width={50}
+          height={50}
+          className="mr-3"
         />
         <span>درگاه سامانه‌های یکپارچه </span>
       </div>

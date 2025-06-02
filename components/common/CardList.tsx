@@ -200,7 +200,7 @@ const CardList = () => {
         key={id}
         href={Link || "#"}
         rel="noopener noreferrer"
-        className="flex flex-col items-center bg-white rounded-lg border border-gray-300 hover:border-indigo-500 transition-colors shadow-sm hover:shadow-lg p-6 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+        className="flex flex-col items-center bg-white rounded-lg border border-gray-300 hover:border-indigo-500 transition-colors shadow-sm hover:shadow-lg p-6 cursor-pointer focus:outline-none"
         tabIndex={0}
         aria-label={`باز کردن لینک ${title}`}
         onClick={(e) => {
