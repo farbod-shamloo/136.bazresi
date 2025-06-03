@@ -80,3 +80,31 @@ export const LoginWithExternalCaptcha = (formData) => {
       });
   });
 };
+
+export const IjadGFesadNashenas = (formData: FormData) => {
+  return new Promise((resolve, reject) => {
+    api
+      .post("/Bazresi/IjadGFesadNashenas", formData)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.error(" IjadGFesadNashenas Error:", error);
+        reject(error);
+      });
+  });
+};
+
+export const PeigiriGozaresh = (formData: FormData) => {
+  return new Promise((resolve, reject) => {
+    api
+      .post("/Bazresi/PeigiriGozaresh", formData)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((error) => {
+        console.error(" PeigiriGozaresh Error:", error);
+        reject(error);
+      });
+  });
+};

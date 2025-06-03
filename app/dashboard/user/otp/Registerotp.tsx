@@ -102,7 +102,7 @@ const mutation = useMutation({
 
   return (
     <div>
-      <div className="relative z-10 bg-white bg-opacity-95 p-6 rounded-lg shadow-lg w-full max-w-xl">
+      <div className="relative z-10 bg-white bg-opacity-95 p-9 rounded-lg shadow-lg w-full max-w-xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl text-[#292b2c]">ثبت نام </h2>
           <Link href="./login">
@@ -112,7 +112,7 @@ const mutation = useMutation({
           </Link>
         </div>
 
-        <FormLayout title="ثبت نام">
+        {/* <FormLayout title="ثبت نام"> */}
           <Form
             form={form}
             layout="vertical"
@@ -314,8 +314,9 @@ const mutation = useMutation({
                 ثبت نام
               </Button>
             </Form.Item>
+            
           </Form>
-        </FormLayout>
+        {/* </FormLayout> */}
       </div>
     </div>
   );

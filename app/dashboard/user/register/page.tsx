@@ -19,6 +19,7 @@ const RegisterPage = () => {
         style={{ backgroundImage: "url('/images/31.jpg')" }}
       >
         <div className="absolute inset-0 bg-black opacity-70 z-0" />
+        
         {step === 1 && <Registerotp setStep={setStep} />}
         {step === 2 && <OtpForm setStep={setStep} />}
       </div>

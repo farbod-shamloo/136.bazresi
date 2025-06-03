@@ -14,8 +14,8 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { createCaptcha } from "@/services/user"; // فرض بر این است که این فانکشن API کپچا را صدا می‌زند
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { createCaptcha, IjadGFesadNashenas } from "@/services/user";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -183,19 +183,48 @@ const CorruptionReportForm = () => {
     },
   ];
 
+  // استفاده از useMutation برای ارسال فرم
+  const mutation = useMutation({
+    mutationFn: (formData: FormData) => IjadGFesadNashenas(formData),
+    onSuccess: () => {
+      message.success("✅ گزارش شما با موفقیت ثبت شد.");
+      form.resetFields();
+      setCurrent(0);
+      setCaptchaValid(false);
+    },
+    onError: (error: any) => {
+      message.error("❌ ارسال گزارش با خطا مواجه شد.");
+      console.error(error);
+    },
+  });
+
   const next = () => {
     form.validateFields(fieldsByStep[current])
       .then(() => setCurrent(current + 1))
-      .catch(() => {}); // ارورها رو اینجا هندل می‌کنیم
+      .catch(() => {});
   };
 
   const prev = () => setCurrent(current - 1);
 
   const onFinish = (values: any) => {
-    console.log("Submitted: ", values);
-    message.success("✅ گزارش شما با موفقیت ثبت شد.");
-    form.resetFields();
-    setCurrent(0);
+    try {
+      const formData = new FormData();
+
+      for (const key in values) {
+        if (key !== "attachment") {
+          formData.append(key, values[key]);
+        }
+      }
+
+      if (values.attachment && values.attachment.length > 0) {
+        formData.append("file", values.attachment[0].originFileObj);
+      }
+
+      mutation.mutate(formData);
+    } catch (error) {
+      message.error("❌ مشکلی در آماده‌سازی داده‌ها پیش آمد.");
+      console.error(error);
+    }
   };
 
   return (
@@ -223,8 +252,7 @@ const CorruptionReportForm = () => {
               <Button
                 type="primary"
                 onClick={next}
-                className="bg-indigo-600 hover:bg-indigo-700 rounded-md"
-                disabled={current === 2 && !captchaValid}
+                disabled={current === steps.length - 1}
               >
                 مرحله بعد
               </Button>
@@ -232,17 +260,17 @@ const CorruptionReportForm = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-green-600 hover:bg-green-700 rounded-md"
+                loading={mutation.isLoading}
                 disabled={!captchaValid}
               >
-                ارسال گزارش
+                ثبت گزارش
               </Button>
             )}
           </div>
         </Form>
       </div>
 
-      <div className="hidden md:flex w-1/3 relative items-center justify-center p-10">
+   <div className="hidden md:flex w-1/3 relative items-center justify-center p-10">
         <div className="relative w-full h-96 rounded-3xl overflow-hidden shadow-xl">
           <Image
             src="/images/44.jpg"
@@ -264,4 +292,3 @@ const CorruptionReportForm = () => {
 };
 
 export default CorruptionReportForm;
-

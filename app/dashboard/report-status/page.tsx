@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { createCaptcha } from "@/services/user";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { createCaptcha, PeigiriGozaresh } from "@/services/user";
 
 const Captcha = ({
   onChange,
@@ -67,10 +67,26 @@ const ReportStatusPage = () => {
   const [form] = Form.useForm();
   const [captchaValid, setCaptchaValid] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: (formData: FormData) => PeigiriGozaresh(formData),
+    onSuccess: (data, variables, context) => {
+      message.success("گزارش با موفقیت ارسال شد");
+      // میتونی فرم رو ریست کنی
+      form.resetFields();
+      setCaptchaValid(false);
+    },
+    onError: (error) => {
+      message.error("خطا در ارسال گزارش");
+    },
+  });
+
   const onFinish = (values: any) => {
-    const { trackingNumber, captchaText, captchaId } = values;
-    message.success(`وضعیت گزارش ${trackingNumber} بررسی شد (نمونه)`);
-    // اینجا میتونی کپچا و داده‌ها رو به API ارسال کنی
+    const formData = new FormData();
+    formData.append("trackingNumber", values.trackingNumber);
+    formData.append("captchaText", values.captchaText);
+    formData.append("captchaId", values.captchaId);
+
+    mutation.mutate(formData);
   };
 
   return (
@@ -112,7 +128,6 @@ const ReportStatusPage = () => {
             />
           </Form.Item>
 
-     
           <Form.Item name="captchaId" hidden>
             <Input />
           </Form.Item>
@@ -121,7 +136,8 @@ const ReportStatusPage = () => {
             <Button
               type="primary"
               htmlType="submit"
-              disabled={!captchaValid}
+              disabled={!captchaValid || mutation.isLoading}
+              loading={mutation.isLoading}
               className="w-full bg-[#004974] hover:bg-[#003c5c] transition text-white font-medium rounded-md py-2"
             >
               بررسی

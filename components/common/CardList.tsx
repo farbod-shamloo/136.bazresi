@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 
 type CardData = {
   id: number;
@@ -35,14 +36,17 @@ const CardList = () => {
       setIsMobile(window.innerWidth < 640);
     };
 
-    
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-    useEffect(() => {
-    const savedViewMode = localStorage.getItem("viewMode") as "card" | "table" | "icon" | null;
+  useEffect(() => {
+    const savedViewMode = localStorage.getItem("viewMode") as
+      | "card"
+      | "table"
+      | "icon"
+      | null;
     if (savedViewMode) {
       setViewMode(savedViewMode);
     }
@@ -51,8 +55,6 @@ const CardList = () => {
   useEffect(() => {
     localStorage.setItem("viewMode", viewMode);
   }, [viewMode]);
-
-  
 
   const iconMap = {
     card: "mdi:view-grid-outline",
@@ -92,140 +94,165 @@ const CardList = () => {
         </button>
       </div>
 
-      
       {loading ? (
         <div className="flex justify-center items-center h-60 text-gray-500 text-lg">
-          <Icon icon="line-md:loading-twotone-loop" width="40" height="40" className="animate-spin mr-2" />
+          <Icon
+            icon="line-md:loading-twotone-loop"
+            width="40"
+            height="40"
+            className="animate-spin mr-2"
+          />
           در حال بارگذاری...
         </div>
       ) : (
         <>
           {/* حالت کارت */}
           {viewMode === "card" && (
-            <div className="max-h-[600px] overflow-y-auto pr-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4 max-w-6xl mx-auto">
-                {filteredCards.map(({ id, title, image, Link }) => (
-                  <div
-                    key={id}
-                    className="flex flex-col border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-colors duration-200 cursor-pointer"
-                    onClick={() => handleClick(id, Link)}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleClick(id, Link);
-                    }}
-                    role="button"
-                    aria-label={`مشاهده کارت ${title}`}
-                  >
-                    <div className="bg-white p-4 h-40 flex items-center justify-center">
-                      <img
-                        src={image}
-                        alt={title}
-                        loading="lazy"
-                        className="h-full object-contain"
-                      />
-                    </div>
-                    <div className="border-t border-gray-100 px-4 py-3">
-                      <h3 className="text-sm font-medium text-gray-800 text-center truncate">
-                        {title}
-                      </h3>
-                      {Link ? (
-                        <a
-                          href={Link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="block text-center text-[#135388] text-sm mt-2 hover:underline"
-                        >
-                          مشاهده لینک
-                        </a>
-                      ) : (
-                        <span className="block text-center text-gray-400 text-sm mt-2 select-none">
-                          لینک ندارد
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+             <div className="bg-gradient-to-tr  px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto py-8">
+        {filteredCards.map(({ id, title, image, Link }, index) => (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.07, duration: 0.4 }}
+            onClick={() => handleClick(id, Link)}
+            onKeyDown={(e) => e.key === "Enter" && handleClick(id, Link)}
+            role="button"
+            tabIndex={0}
+            aria-label={`کلیک روی ${title}`}
+            className="relative bg-white/40 backdrop-blur-xl  bg-gradient-to-br from-white via-gray-50 to-indigo-100 rounded-3xl p-5 border border-white/30 shadow-md transition-all hover:shadow-xl hover:scale-[1.02] cursor-pointer group"
+          >
+            <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-gray-200 mx-auto flex items-center justify-center mb-4 transition group-hover:scale-110">
+              <img
+                src={image}
+                alt={title}
+                className="w-8 h-8 object-contain"
+                loading="lazy"
+              />
             </div>
+
+            <h3 className="text-center text-gray-800 text-lg font-semibold tracking-tight">
+              {title}
+            </h3>
+
+            {Link ? (
+              <a
+                href={Link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="block mt-3 text-center text-sm text-[#0a4c75] font-medium hover:underline transition"
+              >
+                مشاهده لینک
+              </a>
+            ) : (
+              <p className="text-center mt-3 text-sm text-gray-400 select-none">
+                لینک ندارد
+              </p>
+            )}
+          </motion.div>
+        ))}
+      </div>
+    </div>
           )}
 
           {/* حالت جدول */}
           {viewMode === "table" && (
-          <div className="space-y-4">
-  {filteredCards.map(({ id, title, image, Link }, index) => (
-    <div
-      key={id}
-      className="flex items-center justify-between rounded-xl border border-gray-100 bg- px-4 py-3 shadow-sm hover:shadow-md transition cursor-pointer"
-      onClick={() => handleClick(id, Link)}
-    >
-      <div className="flex items-center gap-3">
-        <div className="text-xs text-gray-400 w-6 h-6 flex items-center justify-center bg-gray-100 rounded-full">
-          {index + 1}
-        </div>
-        <img
-          src={image}
-          alt={title}
-          className="w-10 h-10 object-contain rounded-md border border-gray-200"
-        />
-        <span className="text-sm font-medium text-gray-800">{title}</span>
-      </div>
-      <div>
-        {Link ? (
-          <a
-            href={Link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[12px] p-1 text-white bg-[#006e94] rounded-3xl hover:underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            مشاهده لینک
-          </a>
-        ) : (
-          <span className="text-sm text-gray-300">ندارد</span>
-        )}
-      </div>
-    </div>
-  ))}
-</div>
+               <div className="space-y-4">
+      {filteredCards.map(({ id, title, image, Link }, index) => (
+        <motion.div
+          key={id}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            delay: index * 0.05,
+            type: "spring",
+            stiffness: 200,
+            damping: 20,
+          }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border  bg-gradient-to-br from-white via-gray-50 to-indigo-100 border-gray-200 bg-gradient-to-br from-white to-gray-50 px-4 py-4 shadow-sm hover:shadow-md hover:border-indigo-400 transition-all cursor-pointer"
+          onClick={() => handleClick(id, Link)}
+        >
+          {/* راست: آیکون و متن */}
+          <div className="flex items-center gap-4">
+            {/* شماره ردیف */}
+            <div className="w-6 h-6 text-xs flex items-center justify-center text-gray-600 bg-gray-100 rounded-full font-semibold">
+              {index + 1}
+            </div>
 
+            {/* تصویر */}
+            <img
+              src={image}
+              alt={title}
+              className="w-10 h-10 object-contain rounded-lg border border-gray-200"
+            />
+
+            {/* عنوان */}
+            <span className="text-base font-semibold text-gray-800 tracking-tight leading-snug">
+              {title}
+            </span>
+          </div>
+
+          {/* چپ: دکمه یا متن */}
+          <div>
+            {Link ? (
+              <a
+                href={Link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition"
+              >
+                مشاهده لینک
+              </a>
+            ) : (
+              <span className="text-sm text-gray-400 italic">ندارد</span>
+            )}
+          </div>
+        </motion.div>
+      ))}
+    </div>
           )}
 
           {/* حالت آیکون */}
           {viewMode === "icon" && (
             <div className="max-h-[600px] overflow-y-auto pr-2">
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6 px-4">
-    {filteredCards.map(({ id, title, image, Link }) => (
-      <a
-        key={id}
-        href={Link || "#"}
-        rel="noopener noreferrer"
-        className="flex flex-col items-center bg-white rounded-lg border border-gray-300 hover:border-indigo-500 transition-colors shadow-sm hover:shadow-lg p-6 cursor-pointer focus:outline-none"
-        tabIndex={0}
-        aria-label={`باز کردن لینک ${title}`}
-        onClick={(e) => {
-          if (id === 5 && isMobile) {
-            e.preventDefault();
-            window.location.href = `tel:${phoneNumber}`;
-          }
-        }}
-      >
-        <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-          <img
-            src={image}
-            alt={title}
-            className="object-contain w-12 h-12 transition-transform duration-300 hover:scale-110"
-            loading="lazy"
-          />
-        </div>
-        <p className="text-center text-gray-800 font-medium text-base hover:text-indigo-600 transition-colors">
-          {title}
-        </p>
-      </a>
-    ))}
-  </div>
-</div>
-
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6 px-4">
+                {filteredCards.map(({ id, title, image, Link }, index) => (
+                  <motion.a
+                    key={id}
+                    href={Link || "#"}
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    className="relative flex flex-col items-center bg-gradient-to-br from-white via-gray-50 to-indigo-100 rounded-xl border border-gray-200 hover:border-indigo-500 shadow-sm hover:shadow-lg p-6 cursor-pointer focus:outline-none transform transition-transform duration-300"
+                    tabIndex={0}
+                    aria-label={`باز کردن لینک ${title}`}
+                    onClick={(e) => {
+                      if (id === 5 && isMobile) {
+                        e.preventDefault();
+                        window.location.href = `tel:${phoneNumber}`;
+                      }
+                    }}
+                  >
+                    <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden shadow-sm">
+                      <img
+                        src={image}
+                        alt={title}
+                        className="object-contain w-12 h-12 transition-transform duration-300 hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
+                    <p className="text-center text-gray-800 font-semibold text-lg hover:text-indigo-600 transition-colors">
+                      {title}
+                    </p>
+                   
+                  </motion.a>
+                ))}
+              </div>
+            </div>
           )}
         </>
       )}
