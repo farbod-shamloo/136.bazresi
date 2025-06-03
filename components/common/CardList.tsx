@@ -54,11 +54,11 @@ const CardList = () => {
     localStorage.setItem("viewMode", viewMode);
   }, [viewMode]);
 
-  const iconMap = {
-    card: "mdi:view-grid-outline",
-    table: "mdi:view-list",
-    icon: "mdi:table",
-  };
+const iconMap = {
+  card: "mdi:view-grid",      // آیکون ساده‌تر از view-grid-outline
+  table: "mdi:view-list-outline", // آیکون لیست با خطوط ساده‌تر
+  icon: "mdi:table-large",   // آیکون جدول بزرگ، مینیمال‌تر
+};
 
   const toggleViewMode = () => {
     setViewMode((prev) =>
@@ -71,29 +71,35 @@ const CardList = () => {
     return true;
   });
 
-const handleClick = (id: number, link: string) => {
-  if (id === 5 && isMobile) {
-    window.location.href = `tel:${phoneNumber}`;
-  } else if (link) {
-    if (id === 3 || id === 4) {
-      window.open(link, "_blank"); 
-    } else {
-      window.location.href = link; 
+  const handleClick = (id: number, link: string) => {
+    if (id === 5 && isMobile) {
+      window.location.href = `tel:${phoneNumber}`;
+    } else if (link) {
+      if (id === 3 || id === 4) {
+        window.open(link, "_blank");
+      } else {
+        window.location.href = link;
+      }
     }
-  }
-};
+  };
 
   return (
     <div className="max-w-8xl mx-auto">
       <div className="mb-6 flex justify-end">
-        <button
-          onClick={toggleViewMode}
-          className="bg-[#006e94] hover:bg-[#006f94da] transition text-white p-3 rounded-md shadow-md focus:outline-none focus:ring-2"
-          aria-label="تغییر حالت نمایش"
-          title="تغییر حالت نمایش"
-        >
-          <Icon icon={iconMap[viewMode]} width="28" height="28" />
-        </button>
+     <button
+  onClick={toggleViewMode}
+  className="bg-[#0288d1] hover:bg-[#0277bd] transition-colors text-white p-2.5 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+  aria-label="تغییر حالت نمایش"
+  title="تغییر حالت نمایش"
+>
+  <Icon
+    icon={iconMap[viewMode]}
+    width={24}
+    height={24}
+    style={{ color: "rgba(255, 255, 255, 0.85)" }}
+  />
+</button>
+
       </div>
 
       {loading ? (
@@ -141,8 +147,8 @@ const handleClick = (id: number, link: string) => {
                     {link ? (
                       <Link
                         href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target={id === 3 || id === 4 ? "_blank" : "_self"}
+                        rel={id === 3 || id === 4 ? "noopener noreferrer" : undefined}
                         onClick={(e) => e.stopPropagation()}
                         className="block mt-3 text-center text-sm text-[#0a4c75] font-medium hover:underline transition"
                       >
@@ -195,10 +201,10 @@ const handleClick = (id: number, link: string) => {
                     {link ? (
                       <Link
                         href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target={id === 3 || id === 4 ? "_blank" : "_self"}
+                        rel={id === 3 || id === 4 ? "noopener noreferrer" : undefined}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                        className="text-xs sm:text-sm px-3 py-1.5 rounded-full bg-indigo-300 text-white hover:bg-indigo-700 transition"
                       >
                         مشاهده لینک
                       </Link>
@@ -228,7 +234,11 @@ const handleClick = (id: number, link: string) => {
                         e.preventDefault();
                         window.location.href = `tel:${phoneNumber}`;
                       } else if (link) {
-                        window.open(link, "_blank");
+                        if (id === 3 || id === 4) {
+                          window.open(link, "_blank");
+                        } else {
+                          window.location.href = link;
+                        }
                       }
                     }}
                   >
