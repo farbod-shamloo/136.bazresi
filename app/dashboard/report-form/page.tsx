@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Upload,
-  Steps,
-  message,
-} from "antd";
+import { Form, Input, Select, Button, Upload, Steps, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
@@ -57,17 +49,19 @@ const Captcha = ({
           <div className="text-sm text-gray-500">در حال بارگذاری...</div>
         ) : (
           data?.dntCaptchaImage && (
-            <img
+            <Image
               src={`data:image/png;base64,${data.dntCaptchaImage}`}
               alt="captcha"
-              className="rounded-md cursor-pointer"
+              width={100}
+              height={30}
+              unoptimized
+              className="rounded-md cursor-pointer select-none"
               onClick={() => {
                 setUserInput("");
                 onChange("");
                 refetch();
               }}
               title="برای بارگذاری مجدد کلیک کنید"
-              style={{ userSelect: "none", width: 120, height: 40 }}
             />
           )
         )}
@@ -101,23 +95,57 @@ const CorruptionReportForm = () => {
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { label: "موضوع", name: "topic", options: ["مالی", "اداری", "سیاسی"] },
-            { label: "سازمان مربوطه", name: "organization", options: ["شهرداری", "وزارت", "شرکت دولتی"] },
-            { label: "موضوع تخصصی", name: "special_topic", options: ["مناقصات", "بودجه", "قرارداد"] },
-            { label: "نوع گزارش", name: "report_type", options: ["شخصی", "مستند"] },
+            {
+              label: "موضوع",
+              name: "topic",
+              options: ["مالی", "اداری", "سیاسی"],
+            },
+            {
+              label: "سازمان مربوطه",
+              name: "organization",
+              options: ["شهرداری", "وزارت", "شرکت دولتی"],
+            },
+            {
+              label: "موضوع تخصصی",
+              name: "special_topic",
+              options: ["مناقصات", "بودجه", "قرارداد"],
+            },
+            {
+              label: "نوع گزارش",
+              name: "report_type",
+              options: ["شخصی", "مستند"],
+            },
             { label: "فوریت", name: "urgency", options: ["عادی", "فوری"] },
-            { label: "موقعیت جغرافیایی", name: "location", options: ["ملی", "استانی", "محلی"] },
-            { label: "سطح سازمانی", name: "organization_level", options: ["کارشناسی", "مدیریتی", "عالی"] },
+            {
+              label: "موقعیت جغرافیایی",
+              name: "location",
+              options: ["ملی", "استانی", "محلی"],
+            },
+            {
+              label: "سطح سازمانی",
+              name: "organization_level",
+              options: ["کارشناسی", "مدیریتی", "عالی"],
+            },
           ].map((field) => (
             <Form.Item
               key={field.name}
               name={field.name}
               label={<span className="font-medium">{field.label}</span>}
-              rules={[{ required: true, message: `لطفاً ${field.label} را انتخاب کنید.` }]}
+              rules={[
+                {
+                  required: true,
+                  message: `لطفاً ${field.label} را انتخاب کنید.`,
+                },
+              ]}
             >
-              <Select placeholder="انتخاب کنید" className="rounded-lg shadow-md">
+              <Select
+                placeholder="انتخاب کنید"
+                className="rounded-lg shadow-md"
+              >
                 {field.options.map((opt) => (
-                  <Option key={opt} value={opt}>{opt}</Option>
+                  <Option key={opt} value={opt}>
+                    {opt}
+                  </Option>
                 ))}
               </Select>
             </Form.Item>
@@ -130,14 +158,22 @@ const CorruptionReportForm = () => {
       content: (
         <div className="space-y-6">
           <Form.Item label="ارزش تقریبی (تومان)" name="estimated_value">
-            <Input type="number" placeholder="مقدار به تومان" className="rounded-lg shadow-md" />
+            <Input
+              type="number"
+              placeholder="مقدار به تومان"
+              className="rounded-lg shadow-md"
+            />
           </Form.Item>
           <Form.Item
             label="شرح گزارش"
             name="description"
             rules={[{ required: true, message: "توضیحات را وارد کنید" }]}
           >
-            <TextArea rows={5} placeholder="شرح دقیق اتفاق..." className="rounded-lg shadow-md" />
+            <TextArea
+              rows={5}
+              placeholder="شرح دقیق اتفاق..."
+              className="rounded-lg shadow-md"
+            />
           </Form.Item>
         </div>
       ),
@@ -199,7 +235,8 @@ const CorruptionReportForm = () => {
   });
 
   const next = () => {
-    form.validateFields(fieldsByStep[current])
+    form
+      .validateFields(fieldsByStep[current])
       .then(() => setCurrent(current + 1))
       .catch(() => {});
   };
@@ -231,20 +268,34 @@ const CorruptionReportForm = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-[#004974] to-[#006f95] flex flex-col md:flex-row text-white">
       <div className="w-full md:w-2/3 p-8 md:p-16 bg-white text-gray-800  shadow-2xl">
         <div className="mb-10">
-          <h2 className="text-3xl font-bold text-indigo-800 mb-2">فرم گزارش فساد</h2>
-          <p className="text-gray-600">لطفاً با دقت مراحل را پر کنید. اطلاعات شما محرمانه خواهد ماند.</p>
+          <h2 className="text-3xl font-bold text-indigo-800 mb-2">
+            فرم گزارش فساد
+          </h2>
+          <p className="text-gray-600">
+            لطفاً با دقت مراحل را پر کنید. اطلاعات شما محرمانه خواهد ماند.
+          </p>
         </div>
 
         <Steps current={current} responsive className="mb-10">
-          {steps.map((s) => <Steps.Step key={s.title} title={s.title} />)}
+          {steps.map((s) => (
+            <Steps.Step key={s.title} title={s.title} />
+          ))}
         </Steps>
 
-        <Form layout="vertical" form={form} onFinish={onFinish} className="space-y-6">
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={onFinish}
+          className="space-y-6"
+        >
           {steps[current].content}
 
           <div className="flex justify-between mt-8">
             {current > 0 && (
-              <Button onClick={prev} className="rounded-md bg-gray-300 hover:bg-gray-400">
+              <Button
+                onClick={prev}
+                className="rounded-md bg-gray-300 hover:bg-gray-400"
+              >
                 مرحله قبل
               </Button>
             )}
@@ -270,7 +321,7 @@ const CorruptionReportForm = () => {
         </Form>
       </div>
 
-   <div className="hidden md:flex w-1/3 relative items-center justify-center p-10">
+      <div className="hidden md:flex w-1/3 relative items-center justify-center p-10">
         <div className="relative w-full h-96 rounded-3xl overflow-hidden shadow-xl">
           <Image
             src="/images/44.jpg"
@@ -280,10 +331,15 @@ const CorruptionReportForm = () => {
           />
           <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-4">
             <h3 className="text-2xl font-bold mb-2">با ما همراه شوید</h3>
-            <p className="text-sm">افشای فساد، گامی برای آینده بهتر کشورمان است</p>
+            <p className="text-sm">
+              افشای فساد، گامی برای آینده بهتر کشورمان است
+            </p>
           </div>
         </div>
-        <Link href="/" className="absolute top-5 left-5 text-white hover:text-gray-300">
+        <Link
+          href="/"
+          className="absolute top-5 left-5 text-white hover:text-gray-300"
+        >
           <Icon icon="mdi:arrow-left" width="28" />
         </Link>
       </div>
