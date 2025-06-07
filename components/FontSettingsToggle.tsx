@@ -9,7 +9,7 @@ const FontSettingsToggle = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-20 left-4 z-50">
+    <div className="fixed bottom-30 left-4 z-50">
       <button
         onClick={() => setOpen(!open)}
         className="bg-blue-600 text-white p-3 rounded-full shadow-md hover:bg-blue-700 transition"

@@ -76,6 +76,20 @@ body {
   font-size: var(--font-size) !important;
 }
 
+
+.ant-btn,
+.ant-typography {
+  font-size: var(--font-size) !important;
+  font-weight: var(--font-weight) !important;
+  font-family: "iranyekanwebregular", sans-serif !important;
+}
+
+.ant-form-item-label > label {
+  font-size: var(--font-size) !important;
+  font-weight: var(--font-weight) !important;
+  font-family: "iranyekanwebregular", sans-serif !important;
+}
+
 .font-thin,
 .font-extralight,
 .font-light,
