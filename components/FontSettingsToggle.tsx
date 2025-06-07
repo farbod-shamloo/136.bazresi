@@ -26,7 +26,7 @@ const FontSettingsToggle = () => {
             <input
               type="range"
               min={12}
-              max={32}
+              max={20}
               value={size}
               onChange={(e) => setSize(Number(e.target.value))}
               className="w-full"
